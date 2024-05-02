@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "twitch-clips"
+version = "0.1.0"
+description = ""
+authors = ["Ninzalo <k-artemiy@mail.ru>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "twitch_clips"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+undetected-chromedriver = "^3.5.5"
+selenium = "4.9"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
