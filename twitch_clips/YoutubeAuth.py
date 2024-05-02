@@ -37,7 +37,7 @@ class YoutubeAuth:
         if value is None:
             raise ValueError(f"Value of {value} should not be None")
 
-    def login_youtube(self) -> List[dict]:
+    def get_yt_cookies(self) -> List[dict]:
         with self.driver as sb:
             auth_url = (
                 r"https://accounts.google.com/o/oauth2/v2/auth/"
