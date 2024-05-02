@@ -42,6 +42,10 @@ class YoutubeAuth:
         self._enter_password()
         self._open_youtube()
 
+    def get_cookies(self) -> List[dict]:
+        yt_cookies = self.driver.get_cookies()
+        return yt_cookies
+
     def _open_login_page(self) -> None:
         auth_url = (
             r"https://accounts.google.com/o/oauth2/v2/auth/"
@@ -75,9 +79,3 @@ class YoutubeAuth:
     def _open_youtube(self) -> None:
         self.driver.get("https://youtube.com")
         time.sleep(randint(10, 20))
-
-    def get_cookies(self) -> List[dict]:
-        yt_cookies = self.driver.get_cookies()
-        print(yt_cookies)
-        print(type(yt_cookies))
-        return yt_cookies
