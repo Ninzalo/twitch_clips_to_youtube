@@ -20,6 +20,7 @@ class YoutubeAuth:
         self.validate_non_empty_string(string=password)
         self.password = password
 
+        self.validate_non_null_value(value=driver)
         self.driver = driver
 
     @staticmethod
