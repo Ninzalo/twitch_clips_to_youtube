@@ -1,16 +1,12 @@
 import ssl
 
-import undetected_chromedriver as uc
+from seleniumbase import SB
 
 
 class Driver:
-    def __init__(self, headless: bool = False, use_subprocess: bool = True) -> None:
+    def __init__(self, headless: bool = False) -> None:
         ssl._create_default_https_context = ssl._create_unverified_context
-        self.driver = uc.Chrome(headless=headless, use_subprocess=use_subprocess)
+        self.driver = SB(uc=True, xvfb=headless, headless=headless, headless2=headless)
 
-    def get_driver(self) -> uc.Chrome:
+    def get_driver(self):
         return self.driver
-
-    def close(self) -> None:
-        self.driver.close()
-        self.driver.quit()

@@ -10,8 +10,9 @@ packages = [{include = "twitch_clips"}]
 [tool.poetry.dependencies]
 python = "^3.12"
 undetected-chromedriver = "^3.5.5"
-selenium = "4.9"
+selenium = "^4.20.0"
 netscape-cookies = "^1.0.0"
+seleniumbase = "^4.26.2"
 
 
 [build-system]

@@ -1,10 +1,7 @@
-import os
-import sys
 import time
 from random import randint
 from typing import Any, List
 
-import undetected_chromedriver as uc
 from selenium.webdriver.common.keys import Keys
 
 
@@ -13,14 +10,16 @@ class YoutubeAuth:
         self,
         login: str,
         password: str,
-        driver: uc.Chrome,
+        driver,
     ) -> None:
         self.validate_value_type(value=login, type_=str)
         self.validate_non_empty_string(string=login)
         self.login = login
+
         self.validate_value_type(value=password, type_=str)
         self.validate_non_empty_string(string=password)
         self.password = password
+
         self.driver = driver
 
     @staticmethod
@@ -38,51 +37,34 @@ class YoutubeAuth:
         if value is None:
             raise ValueError(f"Value of {value} should not be None")
 
-    def login_youtube(self) -> None:
-        try:
-            self._open_login_page()
-            self._enter_login()
-            self._enter_password()
-            self._open_youtube()
-        except Exception as e:
-            self.driver.save_screenshot(f"{os.getcwd()}/last_yt_login_error.png")
-            print(e)
-            sys.exit()
+    def login_youtube(self) -> List[dict]:
+        with self.driver as sb:
+            auth_url = (
+                r"https://accounts.google.com/o/oauth2/v2/auth/"
+                r"oauthchooseaccount?"
+                r"redirect_uri=https%3A%2F%2Fdevelopers.google.com%2Foauthplayground"
+                r"&prompt=consent"
+                r"&response_type=code"
+                r"&client_id=407408718192.apps.googleusercontent.com"
+                r"&scope=email&access_type=offline&flowName=GeneralOAuthFlow"
+            )
+            sb.uc_open_with_reconnect(auth_url, 3)
+            time.sleep(randint(10, 20))
 
-    def get_cookies(self) -> List[dict]:
-        yt_cookies = self.driver.get_cookies()
-        return yt_cookies
+            login_input_selector = r"#identifierId"
+            sb.type(login_input_selector, self.login)
+            sb.send_keys(login_input_selector, Keys.ENTER)
+            time.sleep(randint(5, 10))
 
-    def _open_login_page(self) -> None:
-        auth_url = (
-            r"https://accounts.google.com/o/oauth2/v2/auth/"
-            r"oauthchooseaccount?"
-            r"redirect_uri=https%3A%2F%2Fdevelopers.google.com%2Foauthplayground"
-            r"&prompt=consent"
-            r"&response_type=code"
-            r"&client_id=407408718192.apps.googleusercontent.com"
-            r"&scope=email&access_type=offline&flowName=GeneralOAuthFlow"
-        )
-        self.driver.get(auth_url)
-        time.sleep(randint(10, 20))
+            password_input_selector = (
+                r"#password > div.aCsJod.oJeWuf > div > div.Xb9hP > input"
+            )
+            sb.type(password_input_selector, self.password)
+            sb.send_keys(password_input_selector, Keys.ENTER)
+            time.sleep(randint(5, 10))
 
-    def _enter_login(self) -> None:
-        login_input_xpath = r'//*[@id="identifierId"]'
-        login_input_el = self.driver.find_element(
-            by=uc.By.XPATH, value=login_input_xpath
-        )
-        login_input_el.send_keys(self.login, Keys.ENTER)
-        time.sleep(randint(5, 10))
+            sb.uc_open_with_reconnect("https://youtube.com", 3)
+            time.sleep(randint(10, 20))
 
-    def _enter_password(self) -> None:
-        password_input_xpath = r'//*[@id="password"]/div[1]/div/div[1]/input'
-        password_input_el = self.driver.find_element(
-            by=uc.By.XPATH, value=password_input_xpath
-        )
-        password_input_el.clear()
-        password_input_el.send_keys(self.password, Keys.ENTER)
-        time.sleep(randint(5, 10))
-
-    def _open_youtube(self) -> None:
-        self.driver.get("https://youtube.com")
-        time.sleep(randint(10, 20))
+            cookies = sb.get_cookies()
+        return cookies
