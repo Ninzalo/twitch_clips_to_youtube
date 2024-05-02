@@ -1,0 +1,24 @@
+*__pycache__/
+__pycache__/
+
+/venv
+venv/
+
+.env
+.git
+
+*.egg-info/
+*.egg
+
+dist
+dist-ssr
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# Logs
+logs
+*.log
