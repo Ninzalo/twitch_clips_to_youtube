@@ -1,3 +1,5 @@
+import os
+import sys
 import time
 from random import randint
 from typing import Any, List
@@ -37,10 +39,15 @@ class YoutubeAuth:
             raise ValueError(f"Value of {value} should not be None")
 
     def login_youtube(self) -> None:
-        self._open_login_page()
-        self._enter_login()
-        self._enter_password()
-        self._open_youtube()
+        try:
+            self._open_login_page()
+            self._enter_login()
+            self._enter_password()
+            self._open_youtube()
+        except Exception as e:
+            self.driver.save_screenshot(f"{os.getcwd()}/last_yt_login_error.png")
+            print(e)
+            sys.exit()
 
     def get_cookies(self) -> List[dict]:
         yt_cookies = self.driver.get_cookies()
