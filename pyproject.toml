@@ -11,6 +11,7 @@ packages = [{include = "twitch_clips"}]
 python = "^3.12"
 undetected-chromedriver = "^3.5.5"
 selenium = "4.9"
+netscape-cookies = "^1.0.0"
 
 
 [build-system]

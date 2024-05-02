@@ -216,6 +216,17 @@ files = [
 ]
 
 [[package]]
+name = "netscape-cookies"
+version = "1.0.0"
+description = "Convert Cookies to Netscape format"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "netscape-cookies-1.0.0.tar.gz", hash = "sha256:5839adae53faf6b71ba507b4003ecab99e2024b153320301db9ce3c390a2b0c6"},
+    {file = "netscape_cookies-1.0.0-py3-none-any.whl", hash = "sha256:cbd464f06fed2f129a4297834110265a36d221254cfe1e71c0fd3f0dc8126d9a"},
+]
+
+[[package]]
 name = "outcome"
 version = "1.3.0.post0"
 description = "Capture the outcome of Python function calls."
@@ -478,4 +489,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "17dfb69c10bebe1c271283b90077f5fefa33be597ee36b56c950cb05b0d6792b"
+content-hash = "f0a1f881cf3d0346f654ba3488588e49461529fd95e8d6f985962378d824f0fc"

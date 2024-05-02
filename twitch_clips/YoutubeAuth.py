@@ -1,15 +1,18 @@
 import time
 from random import randint
-from typing import Any
+from typing import Any, List
 
 import undetected_chromedriver as uc
 from selenium.webdriver.common.keys import Keys
 
-from .Driver import Driver
-
 
 class YoutubeAuth:
-    def __init__(self, login: str, password: str, driver: uc.Chrome) -> None:
+    def __init__(
+        self,
+        login: str,
+        password: str,
+        driver: uc.Chrome,
+    ) -> None:
         self.validate_value_type(value=login, type_=str)
         self.validate_non_empty_string(string=login)
         self.login = login
@@ -73,5 +76,8 @@ class YoutubeAuth:
         self.driver.get("https://youtube.com")
         time.sleep(randint(10, 20))
 
-    def get_cookies(self) -> None:
-        pass
+    def get_cookies(self) -> List[dict]:
+        yt_cookies = self.driver.get_cookies()
+        print(yt_cookies)
+        print(type(yt_cookies))
+        return yt_cookies
