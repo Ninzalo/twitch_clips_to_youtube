@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
 
+from .Logger import BaseLogger, Logger
+
 
 class BaseYTCookieSaver(ABC):
     """Base class for Youtube Cookie Saver"""
@@ -60,13 +62,19 @@ class NetScapeSaver(BaseYTCookieSaver):
 
 
 class YTCookieSaver:
-    def __init__(self, cookies_saver: BaseYTCookieSaver) -> None:
+    def __init__(
+        self, cookies_saver: BaseYTCookieSaver, logger: BaseLogger | None = None
+    ) -> None:
         self.cookies_saver = cookies_saver
+        self.logger = logger if logger else Logger()
 
     def save_cookies(self, cookies: List[dict], filepath: str | Path) -> None:
+        self.logger.log(f"Validating cookies... ")
         self._validate_filepath_type(filepath=filepath)
         self._validate_non_empty_filepath(filepath=filepath)
+        self.logger.log(f"Saving cookies in Netscape format...")
         self.cookies_saver.save(cookies=cookies, filepath=filepath)
+        self.logger.log(f"Saved cookies in Netscape format!")
 
     @staticmethod
     def _validate_filepath_type(filepath: str | Path) -> None:
