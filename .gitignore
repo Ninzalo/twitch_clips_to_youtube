@@ -13,12 +13,14 @@ venv/
 dist
 dist-ssr
 
+downloaded_files/
+cookies/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
 .DS_Store
-downloaded_files/
 
 # Logs
 logs
