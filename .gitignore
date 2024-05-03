@@ -9,12 +9,14 @@ venv/
 
 *.egg-info/
 *.egg
+*.mp4
 
 dist
 dist-ssr
 
 downloaded_files/
 cookies/
+clips/
 
 # Editor directories and files
 .vscode/*
