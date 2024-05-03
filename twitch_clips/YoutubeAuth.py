@@ -17,7 +17,7 @@ class YoutubeAuth:
     ) -> None:
         self.logger = logger if logger else Logger()
 
-        self.logger.log(f"Validating YouTube credentials...")
+        self.logger.log("Validating YouTube credentials...")
         self.validate_value_type(value=login, type_=str)
         self.validate_non_empty_string(string=login)
         self.login = login
@@ -26,7 +26,7 @@ class YoutubeAuth:
         self.validate_non_empty_string(string=password)
         self.password = password
 
-        self.logger.log(f"Validating driver...")
+        self.logger.log("Validating driver...")
         self.validate_non_null_value(value=driver)
         self.driver = driver
 
@@ -51,7 +51,8 @@ class YoutubeAuth:
             auth_url = (
                 r"https://accounts.google.com/o/oauth2/v2/auth/"
                 r"oauthchooseaccount?"
-                r"redirect_uri=https%3A%2F%2Fdevelopers.google.com%2Foauthplayground"
+                r"redirect_uri=https%3A%2F%2Fdevelopers.google.com"
+                r"%2Foauthplayground"
                 r"&prompt=consent"
                 r"&response_type=code"
                 r"&client_id=407408718192.apps.googleusercontent.com"
