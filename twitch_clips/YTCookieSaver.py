@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List
 
-from netscape_cookies import save_cookies_to_file
-
 
 class BaseYTCookieSaver(ABC):
     """Base class for Youtube Cookie Saver"""
@@ -17,7 +15,48 @@ class BaseYTCookieSaver(ABC):
 class NetScapeSaver(BaseYTCookieSaver):
     @classmethod
     def save(cls, cookies: List[dict], filepath: str | Path) -> None:
-        save_cookies_to_file(cookie_data=cookies, file_path=filepath)
+        cls._save_cookies_to_file(cookie_data=cookies, file_path=filepath)
+
+    @classmethod
+    def _save_cookies_to_file(cls, cookie_data, file_path):
+        netscape_string = cls._to_netscape_string(cookie_data)
+        with open(file_path, "w", encoding="utf-8") as file:
+            netscape_header_text = (
+                "# Netscape HTTP Cookie File\n"
+                "# http://curl.haxx.se/rfc/cookie_spec.html\n"
+                "# This is a generated file!  Do not edit.\n\n"
+            )
+
+            file.write(netscape_header_text)
+            file.write(netscape_string)
+
+    @classmethod
+    def _to_netscape_string(cls, cookie_data):
+        result = []
+        for cookie in cookie_data:
+            domain = cookie.get("domain", "")
+            expiration_date = cookie.get("expiry", None)
+            path = cookie.get("path", "")
+            secure = cookie.get("secure", False)
+            name = cookie.get("name", "")
+            value = cookie.get("value", "")
+
+            include_sub_domain = domain.startswith(".") if domain else False
+            expiry = str(int(expiration_date)) if expiration_date else "0"
+
+            result.append(
+                [
+                    domain,
+                    str(include_sub_domain).upper(),
+                    path,
+                    str(secure).upper(),
+                    expiry,
+                    name,
+                    value,
+                ]
+            )
+
+        return "\n".join("\t".join(cookie_parts) for cookie_parts in result)
 
 
 class YTCookieSaver:
