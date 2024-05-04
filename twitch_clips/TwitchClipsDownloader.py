@@ -62,21 +62,26 @@ class TwitchClipsDownloader:
         self.logger.log(f"Got {len(all_clips_json)} clips")
         return all_clips_json
 
-    def download_clips(self, clips_slugs: List[str]) -> None:
-        self.logger.log("Downloading clips...")
+    def download_clip(self, clip_slug: str) -> None:
+        self.logger.log(f"Downloading clip {clip_slug}...")
+        file_name = "".join([f"{self.clips_folder_path}", r"{id}.{format}"])
         command = [
             "twitch-dl",
             "download",
+            clip_slug,
+            "-q",
+            "source",
+            "--overwrite",
+            "-o",
+            file_name,
         ]
-        for clip_slug in clips_slugs:
-            command.append(str(clip_slug))
-        command.append("-q")
-        command.append("source")
-        command.append("--overwrite")
-        command.append("-o")
-        command.append(f"{self.clips_folder_path}" r"{id}.{format}")
-
         subprocess.check_output(command)
+        self.logger.log(f"Downloaded clip {clip_slug}")
+
+    def download_multiple_clips(self, clips_slugs: List[str]) -> None:
+        self.logger.log("Downloading multiple clips...")
+        for clip_slug in clips_slugs:
+            self.download_clip(clip_slug)
         self.logger.log(f"Downloaded {self._count_downloaded_clips()} clips")
 
     def get_clips_slugs(self, clips_json: List[dict]) -> List[str]:
@@ -85,18 +90,26 @@ class TwitchClipsDownloader:
         self.logger.log(f"Got {len(clips_slugs)} clips slugs")
         return clips_slugs
 
-    def delete_clips(self) -> None:
+    def delete_clip_by_path(self, path: str) -> None:
+        self.logger.log(f"Deleting clip {path}...")
+        if Path(path).exists():
+            os.remove(path)
+            self.logger.log(f"Clip deleted: {path}")
+            return
+        self.logger.log(f"Clip not found: {path}")
+        return
+
+    def delete_all_clips(self) -> None:
         self.logger.log("Cleaning clips folder...")
         for dirs, _, files in os.walk(self.clips_folder_path):
             for file in files:
                 file_path = os.path.join(dirs, file)
-                os.remove(file_path)
-                self.logger.log(f"Clip deleted: {file_path}")
+                self.delete_clip_by_path(path=file_path)
         self.logger.log("Clips folder cleaned!")
 
     def _count_downloaded_clips(self) -> int:
         counter = 0
-        for dirs, _, files in os.walk(self.clips_folder_path):
-            for file in files:
+        for _, _, files in os.walk(self.clips_folder_path):
+            for _ in files:
                 counter += 1
         return counter
