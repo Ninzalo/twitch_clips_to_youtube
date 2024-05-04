@@ -1,4 +1,6 @@
-from youtube_up import YTUploaderSession
+from pathlib import Path
+
+from youtube_up import AllowCommentsEnum, Metadata, PrivacyEnum, YTUploaderSession
 
 from .Logger import BaseLogger, Logger
 
@@ -18,3 +20,31 @@ class YoutubeUploader:
             return False
         self.logger.log("Cookies validated!")
         return True
+
+    def upload(
+        self,
+        title: str,
+        video_path: str | Path,
+        description: str | None = None,
+        privacy: PrivacyEnum | None = None,
+        allow_comments: AllowCommentsEnum | None = None,
+    ) -> None:
+        if description is None:
+            description = ""
+        if privacy is None:
+            privacy = PrivacyEnum.PUBLIC
+        if allow_comments is None:
+            allow_comments = AllowCommentsEnum.HOLD_INAPPROPRIATE
+        if not isinstance(video_path, str):
+            video_path = str(video_path)
+
+        self.logger.log(f"Uploading video: {title}")
+        video_metadata = Metadata(
+            title=title,
+            description=description,
+            privacy=privacy,
+            made_for_kids=False,
+            allow_comments_mode=allow_comments,
+        )
+        self.uploader.upload(file_path=video_path, metadata=video_metadata)
+        self.logger.log(f"Video uploaded: {title}")
