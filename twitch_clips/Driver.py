@@ -16,5 +16,4 @@ class Driver:
 
     def get_driver(self) -> _GeneratorContextManager:
         self.logger.log("Driver Initialized")
-        print(type(self.driver))
         return self.driver

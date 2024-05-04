@@ -17,6 +17,7 @@ dist-ssr
 downloaded_files/
 cookies/
 clips/
+configs/
 
 # Editor directories and files
 .vscode/*
