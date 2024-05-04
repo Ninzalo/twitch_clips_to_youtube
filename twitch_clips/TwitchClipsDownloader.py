@@ -3,14 +3,20 @@ import os
 import subprocess
 from copy import deepcopy
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
-from typing import List, Literal, Tuple
+from typing import List, Tuple
 
 import emoji
 
 from .Logger import BaseLogger, Logger
 
-PERIOD = Literal["last_day", "last_week", "last_month", "all"]
+
+class PeriodEnum(str, Enum):
+    LAST_DAY = "last_day"
+    LAST_WEEK = "last_week"
+    LAST_MONTH = "last_month"
+    ALL = "all"
 
 
 @dataclass
@@ -35,7 +41,7 @@ class TwitchClipsDownloader:
         self.twitch_urls = twitch_urls
 
     def get_clips(
-        self, clips_limit: int | None = None, period: PERIOD | None = None
+        self, clips_limit: int | None = None, period: PeriodEnum | None = None
     ) -> List[dict]:
         self.logger.log("Getting clips...")
         all_clips_json = []
