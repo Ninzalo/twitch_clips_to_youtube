@@ -1,4 +1,5 @@
 import ssl
+from contextlib import _GeneratorContextManager
 
 from seleniumbase import SB
 
@@ -13,6 +14,7 @@ class Driver:
         self.driver = SB(uc=True, xvfb=headless, headless=headless, headless2=headless)
         self.logger = logger if logger else Logger()
 
-    def get_driver(self):
+    def get_driver(self) -> _GeneratorContextManager:
         self.logger.log("Driver Initialized")
+        print(type(self.driver))
         return self.driver

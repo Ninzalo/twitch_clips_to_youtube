@@ -1,4 +1,5 @@
 import time
+from contextlib import _GeneratorContextManager
 from random import randint
 from typing import Any, List
 
@@ -12,7 +13,7 @@ class YoutubeAuth:
         self,
         login: str,
         password: str,
-        driver,
+        driver: _GeneratorContextManager,
         logger: BaseLogger | None = None,
     ) -> None:
         self.logger = logger if logger else Logger()
