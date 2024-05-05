@@ -1,7 +1,6 @@
-from .Driver import Driver
+from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import PeriodEnum, TwitchClipsDownloader
-from .TwitchClipsToYoutubeVideos import TwitchClipsToYoutubeVideos
-from .YoutubeAuth import YoutubeAuth
-from .YoutubeUploader import YoutubeUploader
-from .YTCookieSaver import BaseYTCookieSaver, NetScapeSaver, YTCookieSaver
+from .TwitchClipsToYoutube import TwitchClipsToYoutube
+from .YoutubeUploaderViaApi import YoutubeUploaderViaApi
+from .YoutubeUploaderViaCookies import YoutubeUploaderViaCookies

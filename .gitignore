@@ -1,8 +1,7 @@
 *__pycache__/
 __pycache__/
 
-/venv
-venv/
+*venv/
 
 .env
 .git
@@ -14,10 +13,8 @@ venv/
 dist
 dist-ssr
 
-downloaded_files/
-cookies/
-clips/
-configs/
+# Project folders and files
+*credentials.storage
 
 # Editor directories and files
 .vscode/*
@@ -26,5 +23,5 @@ configs/
 .DS_Store
 
 # Logs
-logs
+*logs/
 *.log

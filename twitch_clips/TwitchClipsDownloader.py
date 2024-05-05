@@ -114,8 +114,13 @@ class TwitchClipsDownloader:
                     return False
             return True
 
-        self.logger.log("Filtering clips by unsupported words is done!")
-        return list(filter(filter_unsupported_words, clips_info))
+        filtered_clips_info = list(filter(filter_unsupported_words, clips_info))
+        reduced_by = len(clips_info) - len(filtered_clips_info)
+        self.logger.log(
+            "Filtering clips by unsupported words is done! "
+            f"({reduced_by} clips removed)"
+        )
+        return filtered_clips_info
 
     def _demojize_clip_title(self, clip_info: ClipInfo) -> ClipInfo:
         clip_info_dict_without_title = deepcopy(clip_info.__dict__)
@@ -152,7 +157,10 @@ class TwitchClipsDownloader:
             return True
 
         filtered_clips_info = list(filter(is_used_title, clips_info))
-        self.logger.log("Filtering clips by used titles is done!")
+        reduced_by = len(clips_info) - len(filtered_clips_info)
+        self.logger.log(
+            f"Filtering clips by used titles is done! ({reduced_by} clips removed)"
+        )
         return filtered_clips_info, new_used_titles
 
     def sort_by_views(
