@@ -10,6 +10,7 @@ from twitch_clips import (
     Logger,
     PeriodEnum,
     TwitchClipsToYoutube,
+    TwitchData,
 )
 
 load_dotenv()
@@ -67,13 +68,15 @@ if __name__ == "__main__":
         api_settings=ApiUploaderSettings(
             client_secret_folder_path=CLIENT_SECRET_FOLDER_PATH
         ),
-        twitch_channels_urls=TWICH_URLS,
-        clips_folder_path=CLIPS_FOLDER_PATH,
         max_videos_to_upload=MAX_VIDEOS,
-        twitch_clips_period=TWITCH_CLIPS_PERIOD,
-        clips_per_twitch_channel_limit=CLIPS_PER_TWITCH_CHANNEL_LIMIT,
-        unsupported_words_for_title=UNSUPPORTED_WORDS,
-        used_titles=USED_TITLES,
+        twitch_data=TwitchData(
+            channels_urls=TWICH_URLS,
+            clips_folder_path=CLIPS_FOLDER_PATH,
+            clips_period=TWITCH_CLIPS_PERIOD,
+            clips_per_channel_limit=CLIPS_PER_TWITCH_CHANNEL_LIMIT,
+            unsupported_words_for_title=UNSUPPORTED_WORDS,
+            used_titles=USED_TITLES,
+        ),
         logger=logger,
     )
     uploader.run()

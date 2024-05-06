@@ -7,7 +7,7 @@ from typing import List
 from .BaseYoutubeUploader import BaseUploader
 from .CookieFormatter import NetScapeFormatter
 from .Logger import BaseLogger, Logger
-from .TwitchClipsDownloader import ClipInfo, PeriodEnum, TwitchClipsDownloader
+from .TwitchClipsDownloader import ClipInfo, TwitchClipsDownloader, TwitchData
 from .YoutubeUploaderViaApi import ApiUploaderSettings, YoutubeUploaderViaApi
 from .YoutubeUploaderViaCookies import (
     CookiesUploaderSettings,
@@ -18,19 +18,17 @@ from .YoutubeUploaderViaCookies import (
 class TwitchClipsToYoutube:
     def __init__(
         self,
-        twitch_channels_urls: List[str],
-        clips_folder_path: str,
         max_videos_to_upload: int,
+        twitch_data: TwitchData,
         cookies_settings: CookiesUploaderSettings | None = None,
-        # client_secret_folder_path: str | None = None,
         api_settings: ApiUploaderSettings | None = None,
-        twitch_clips_period: PeriodEnum | None = None,
-        clips_per_twitch_channel_limit: int | None = None,
-        unsupported_words_for_title: List[str] | None = None,
-        used_titles: List[str] | None = None,
         logger: BaseLogger | None = None,
     ) -> None:
         self.logger = logger if logger else Logger()
+
+        self.max_videos = max_videos_to_upload
+        if self.max_videos < 1:
+            raise ValueError("Max videos must be at least 1")
 
         self.retries = None
         self.cookies_folder_path = f"{os.getcwd()}"
@@ -54,24 +52,23 @@ class TwitchClipsToYoutube:
         if not self.use_cookies and not self.use_client_secret:
             raise ValueError("No cookies or client secret provided")
 
-        self.clips_folder_path = clips_folder_path
+        self.clips_folder_path = twitch_data.clips_folder_path
 
-        self.twitch_urls = twitch_channels_urls
-        self.twitch_clips_period = twitch_clips_period
-        self.clips_limit = clips_per_twitch_channel_limit
+        self.twitch_urls = twitch_data.channels_urls
+        self.twitch_clips_period = twitch_data.clips_period
+        self.clips_limit = twitch_data.clips_per_channel_limit
 
         self.unsupported_words = (
-            unsupported_words_for_title if unsupported_words_for_title else []
+            twitch_data.unsupported_words_for_title
+            if twitch_data.unsupported_words_for_title
+            else []
         )
-        self.used_titles = used_titles if used_titles else []
-        self.max_videos = max_videos_to_upload
-        if self.max_videos < 1:
-            raise ValueError("Max videos must be at least 1")
+        self.used_titles = twitch_data.used_titles if twitch_data.used_titles else []
 
         self.twitch_downloader = TwitchClipsDownloader(
-            twitch_urls=self.twitch_urls,
+            twitch_urls=twitch_data.channels_urls,
+            clips_folder_path=twitch_data.clips_folder_path,
             logger=self.logger,
-            clips_folder_path=self.clips_folder_path,
         )
 
     def _create_clips_folder(self) -> None:

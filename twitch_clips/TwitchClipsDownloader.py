@@ -20,6 +20,16 @@ class PeriodEnum(str, Enum):
 
 
 @dataclass
+class TwitchData:
+    channels_urls: List[str]
+    clips_folder_path: str
+    clips_period: PeriodEnum | None = None
+    clips_per_channel_limit: int | None = None
+    unsupported_words_for_title: List[str] | None = None
+    used_titles: List[str] | None = None
+
+
+@dataclass
 class ClipInfo:
     id: str
     slug: str
