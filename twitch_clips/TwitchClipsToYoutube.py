@@ -14,8 +14,6 @@ from .YoutubeUploaderViaCookies import YoutubeUploaderViaCookies
 class TwitchClipsToYoutube:
     def __init__(
         self,
-        youtube_login: str,
-        youtube_password: str,
         twitch_channels_urls: List[str],
         clips_folder_path: str,
         max_videos_to_upload: int,
@@ -29,9 +27,6 @@ class TwitchClipsToYoutube:
         logger: BaseLogger | None = None,
     ) -> None:
         self.logger = logger if logger else Logger()
-
-        self.youtube_login = youtube_login
-        self.youtube_password = youtube_password
 
         self.retries = cookies_validation_retries
         self.cookies_folder_path = f"{os.getcwd()}"
