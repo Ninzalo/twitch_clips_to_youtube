@@ -18,10 +18,24 @@ class YoutubeUploaderViaCookies(BaseUploader):
     ) -> None:
         self.logger = logger if logger else Logger()
         self.cookies_path = cookies_path
-        self.uploader = YTUploaderSession.from_cookies_txt(
-            cookies_txt_path=cookies_path
-        )
         self.retries = retries if retries else 3
+        self.uploader = self._get_uploader()
+
+    def _get_uploader(self) -> YTUploaderSession:
+        for retry in range(self.retries):
+            try:
+                uploader = YTUploaderSession.from_cookies_txt(
+                    cookies_txt_path=self.cookies_path
+                )
+                return uploader
+            except Exception:
+                self.logger.log(
+                    "Failed to get Cookie-Uploader. "
+                    f"Attempt: {retry + 1}/{self.retries}"
+                )
+        raise RuntimeError(
+            f"Failed to get Cookie-Uploader after {self.retries} attempts"
+        )
 
     def has_valid_cookies(self) -> bool:
         """Checks if the provided cookies file is valid."""
@@ -31,7 +45,7 @@ class YoutubeUploaderViaCookies(BaseUploader):
             if not self.uploader.has_valid_cookies():
                 self.logger.log(
                     "Invalid cookies provided, or cookies file not found. "
-                    f"Attempt: {retry + 1}"
+                    f"Attempt: {retry + 1}/{self.retries}"
                 )
                 is_valid = False
                 time.sleep(randint(100, 200))
