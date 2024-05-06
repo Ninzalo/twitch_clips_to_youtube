@@ -4,4 +4,7 @@ from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import PeriodEnum, TwitchClipsDownloader
 from .TwitchClipsToYoutube import TwitchClipsToYoutube
 from .YoutubeUploaderViaApi import YoutubeUploaderViaApi
-from .YoutubeUploaderViaCookies import YoutubeUploaderViaCookies
+from .YoutubeUploaderViaCookies import (
+    CookiesUploaderSettings,
+    YoutubeUploaderViaCookies,
+)

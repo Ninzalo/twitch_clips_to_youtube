@@ -4,7 +4,12 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from twitch_clips import Logger, PeriodEnum, TwitchClipsToYoutube
+from twitch_clips import (
+    CookiesUploaderSettings,
+    Logger,
+    PeriodEnum,
+    TwitchClipsToYoutube,
+)
 
 load_dotenv()
 
@@ -54,8 +59,10 @@ logger = Logger(debug_mode=DEBUG_MODE)
 if __name__ == "__main__":
 
     uploader = TwitchClipsToYoutube(
-        cookies_folder_path=COOKIES_FOLDER_PATH,
-        cookies_validation_retries=COOKIES_VALIDATION_RETRIES,
+        cookies_settings=CookiesUploaderSettings(
+            cookies_folder_path=COOKIES_FOLDER_PATH,
+            cookies_validation_retries=COOKIES_VALIDATION_RETRIES,
+        ),
         client_secret_folder_path=CLIENT_SECRET_FOLDER_PATH,
         twitch_channels_urls=TWICH_URLS,
         clips_folder_path=CLIPS_FOLDER_PATH,

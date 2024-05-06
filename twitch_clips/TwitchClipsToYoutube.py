@@ -9,7 +9,10 @@ from .CookieFormatter import NetScapeFormatter
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import ClipInfo, PeriodEnum, TwitchClipsDownloader
 from .YoutubeUploaderViaApi import YoutubeUploaderViaApi
-from .YoutubeUploaderViaCookies import YoutubeUploaderViaCookies
+from .YoutubeUploaderViaCookies import (
+    CookiesUploaderSettings,
+    YoutubeUploaderViaCookies,
+)
 
 
 class TwitchClipsToYoutube:
@@ -18,8 +21,7 @@ class TwitchClipsToYoutube:
         twitch_channels_urls: List[str],
         clips_folder_path: str,
         max_videos_to_upload: int,
-        cookies_folder_path: str | None = None,
-        cookies_validation_retries: int | None = None,
+        cookies_settings: CookiesUploaderSettings | None = None,
         client_secret_folder_path: str | None = None,
         twitch_clips_period: PeriodEnum | None = None,
         clips_per_twitch_channel_limit: int | None = None,
@@ -29,11 +31,12 @@ class TwitchClipsToYoutube:
     ) -> None:
         self.logger = logger if logger else Logger()
 
-        self.retries = cookies_validation_retries
+        self.retries = None
         self.cookies_folder_path = f"{os.getcwd()}"
         self.use_cookies = False
-        if cookies_folder_path is not None:
-            self.cookies_folder_path = cookies_folder_path
+        if cookies_settings is not None:
+            self.cookies_folder_path = cookies_settings.cookies_folder_path
+            self.retries = cookies_settings.cookies_validation_retries
             self.use_cookies = True
         self.json_cookies_path = str(Path(f"{self.cookies_folder_path}/cookies.json"))
         self.cookies_path = str(Path(f"{self.cookies_folder_path}/cookies.txt"))

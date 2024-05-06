@@ -1,4 +1,5 @@
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from random import randint
 from typing import List
@@ -9,15 +10,21 @@ from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader
 from .Logger import BaseLogger, Logger
 
 
+@dataclass
+class CookiesUploaderSettings:
+    cookies_folder_path: str | Path
+    cookies_validation_retries: int
+
+
 class YoutubeUploaderViaCookies(BaseUploader):
     def __init__(
         self,
-        cookies_path: str,
+        cookies_path: str | Path,
         retries: int | None = None,
         logger: BaseLogger | None = None,
     ) -> None:
         self.logger = logger if logger else Logger()
-        self.cookies_path = cookies_path
+        self.cookies_path = str(cookies_path)
         self.retries = retries if retries else 3
         self.uploader = self._get_uploader()
 
