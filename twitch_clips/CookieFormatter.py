@@ -75,6 +75,8 @@ class NetScapeFormatter(BaseCookieFormatter):
         for cookie in cookie_data:
             domain = cookie.get("domain", "")
             expiration_date = cookie.get("expiry", None)
+            if not expiration_date:
+                expiration_date = cookie.get("expirationDate", None)
             path = cookie.get("path", "")
             secure = cookie.get("secure", False)
             name = cookie.get("name", "")
