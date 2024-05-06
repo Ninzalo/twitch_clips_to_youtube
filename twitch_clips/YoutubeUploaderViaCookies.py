@@ -31,7 +31,7 @@ class YoutubeUploaderViaCookies(BaseUploader):
             if not self.uploader.has_valid_cookies():
                 self.logger.log(
                     "Invalid cookies provided, or cookies file not found. "
-                    f"Attempt: {retry}"
+                    f"Attempt: {retry + 1}"
                 )
                 is_valid = False
                 time.sleep(randint(100, 200))
