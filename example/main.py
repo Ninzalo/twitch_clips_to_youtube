@@ -8,7 +8,11 @@ from twitch_clips import Logger, PeriodEnum, TwitchClipsToYoutube
 
 load_dotenv()
 
+MAX_VIDEOS = 1
+
 DEBUG_MODE = True
+
+COOKIES_VALIDATION_RETRIES = 5
 
 YOUTUBE_LOGIN = str(os.getenv("YOUTUBE_LOGIN"))
 YOUTUBE_PASSWORD = str(os.getenv("YOUTUBE_PASSWORD"))
@@ -17,8 +21,6 @@ COOKIES_FOLDER_PATH = str(Path(f"{os.getcwd()}/cookies"))
 CLIENT_SECRET_FOLDER_PATH = str(Path(f"{os.getcwd()}/client_secret"))
 
 CLIPS_FOLDER_PATH = f"{os.getcwd()}/clips/"
-
-MAX_VIDEOS = 1
 
 CLIPS_PER_TWITCH_CHANNEL_LIMIT = None
 
@@ -58,6 +60,7 @@ if __name__ == "__main__":
         youtube_login=YOUTUBE_LOGIN,
         youtube_password=YOUTUBE_PASSWORD,
         cookies_folder_path=COOKIES_FOLDER_PATH,
+        cookies_validation_retries=COOKIES_VALIDATION_RETRIES,
         client_secret_folder_path=CLIENT_SECRET_FOLDER_PATH,
         twitch_channels_urls=TWICH_URLS,
         clips_folder_path=CLIPS_FOLDER_PATH,

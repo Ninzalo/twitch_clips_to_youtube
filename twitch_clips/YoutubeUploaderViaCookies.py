@@ -1,4 +1,6 @@
+import time
 from pathlib import Path
+from random import randint
 from typing import List
 
 from youtube_up import AllowCommentsEnum, Metadata, PrivacyEnum, YTUploaderSession
@@ -11,6 +13,7 @@ class YoutubeUploaderViaCookies(BaseUploader):
     def __init__(
         self,
         cookies_path: str,
+        retries: int | None = None,
         logger: BaseLogger | None = None,
     ) -> None:
         self.logger = logger if logger else Logger()
@@ -18,12 +21,24 @@ class YoutubeUploaderViaCookies(BaseUploader):
         self.uploader = YTUploaderSession.from_cookies_txt(
             cookies_txt_path=cookies_path
         )
+        self.retries = retries if retries else 3
 
     def has_valid_cookies(self) -> bool:
         """Checks if the provided cookies file is valid."""
         self.logger.log("Validating cookies...")
-        if not self.uploader.has_valid_cookies():
-            self.logger.log("Invalid cookies provided, or cookies file not found")
+        is_valid = False
+        for retry in range(self.retries):
+            if not self.uploader.has_valid_cookies():
+                self.logger.log(
+                    "Invalid cookies provided, or cookies file not found. "
+                    f"Attempt: {retry}"
+                )
+                is_valid = False
+                time.sleep(randint(100, 200))
+                continue
+            is_valid = True
+            break
+        if not is_valid:
             return False
         self.logger.log("Cookies validated!")
         return True

@@ -20,6 +20,7 @@ class TwitchClipsToYoutube:
         clips_folder_path: str,
         max_videos_to_upload: int,
         cookies_folder_path: str | None = None,
+        cookies_validation_retries: int | None = None,
         client_secret_folder_path: str | None = None,
         twitch_clips_period: PeriodEnum | None = None,
         clips_per_twitch_channel_limit: int | None = None,
@@ -32,6 +33,7 @@ class TwitchClipsToYoutube:
         self.youtube_login = youtube_login
         self.youtube_password = youtube_password
 
+        self.retries = cookies_validation_retries
         self.cookies_folder_path = f"{os.getcwd()}"
         self.use_cookies = False
         if cookies_folder_path is not None:
@@ -134,7 +136,9 @@ class TwitchClipsToYoutube:
         if self.use_cookies:
             if self._check_cookies_file():
                 yt_uploader = YoutubeUploaderViaCookies(
-                    cookies_path=self.cookies_path, logger=self.logger
+                    cookies_path=self.cookies_path,
+                    retries=self.retries,
+                    logger=self.logger,
                 )
                 if not yt_uploader.has_valid_cookies():
                     self.logger.log("Invalid cookies.")
