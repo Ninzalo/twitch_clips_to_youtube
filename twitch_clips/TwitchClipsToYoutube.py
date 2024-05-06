@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import List
 
 from .BaseYoutubeUploader import BaseUploader
+from .CookieFormatter import NetScapeFormatter
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import ClipInfo, PeriodEnum, TwitchClipsDownloader
 from .YoutubeUploaderViaApi import YoutubeUploaderViaApi
@@ -34,6 +35,7 @@ class TwitchClipsToYoutube:
         if cookies_folder_path is not None:
             self.cookies_folder_path = cookies_folder_path
             self.use_cookies = True
+        self.json_cookies_path = str(Path(f"{self.cookies_folder_path}/cookies.json"))
         self.cookies_path = str(Path(f"{self.cookies_folder_path}/cookies.txt"))
 
         self.client_secret_folder_path = f"{os.getcwd()}"
@@ -80,6 +82,16 @@ class TwitchClipsToYoutube:
             Path(self.cookies_folder_path).mkdir(parents=True, exist_ok=True)
             return False
         if not Path(self.cookies_path).exists():
+            if Path(self.json_cookies_path).exists():
+                try:
+                    netscape_formatter = NetScapeFormatter(logger=self.logger)
+                    netscape_formatter.save(
+                        json_cookies_file_path=self.json_cookies_path,
+                        formatted_cookies_file_path=self.cookies_path,
+                    )
+                    return True
+                except Exception:
+                    pass
             self.logger.log("Cookies file doesn't exist.")
             return False
         return True
