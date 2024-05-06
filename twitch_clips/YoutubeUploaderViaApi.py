@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List
@@ -13,6 +14,11 @@ from oauth2client.tools import run_flow
 
 from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader
 from .Logger import BaseLogger, Logger
+
+
+@dataclass
+class ApiUploaderSettings:
+    client_secret_folder_path: str
 
 
 class YoutubeUploaderViaApi(BaseUploader):

@@ -5,6 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from twitch_clips import (
+    ApiUploaderSettings,
     CookiesUploaderSettings,
     Logger,
     PeriodEnum,
@@ -63,7 +64,9 @@ if __name__ == "__main__":
             cookies_folder_path=COOKIES_FOLDER_PATH,
             cookies_validation_retries=COOKIES_VALIDATION_RETRIES,
         ),
-        client_secret_folder_path=CLIENT_SECRET_FOLDER_PATH,
+        api_settings=ApiUploaderSettings(
+            client_secret_folder_path=CLIENT_SECRET_FOLDER_PATH
+        ),
         twitch_channels_urls=TWICH_URLS,
         clips_folder_path=CLIPS_FOLDER_PATH,
         max_videos_to_upload=MAX_VIDEOS,

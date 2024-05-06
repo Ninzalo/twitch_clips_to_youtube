@@ -8,7 +8,7 @@ from .BaseYoutubeUploader import BaseUploader
 from .CookieFormatter import NetScapeFormatter
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import ClipInfo, PeriodEnum, TwitchClipsDownloader
-from .YoutubeUploaderViaApi import YoutubeUploaderViaApi
+from .YoutubeUploaderViaApi import ApiUploaderSettings, YoutubeUploaderViaApi
 from .YoutubeUploaderViaCookies import (
     CookiesUploaderSettings,
     YoutubeUploaderViaCookies,
@@ -22,7 +22,8 @@ class TwitchClipsToYoutube:
         clips_folder_path: str,
         max_videos_to_upload: int,
         cookies_settings: CookiesUploaderSettings | None = None,
-        client_secret_folder_path: str | None = None,
+        # client_secret_folder_path: str | None = None,
+        api_settings: ApiUploaderSettings | None = None,
         twitch_clips_period: PeriodEnum | None = None,
         clips_per_twitch_channel_limit: int | None = None,
         unsupported_words_for_title: List[str] | None = None,
@@ -43,11 +44,11 @@ class TwitchClipsToYoutube:
 
         self.client_secret_folder_path = f"{os.getcwd()}"
         self.use_client_secret = False
-        if client_secret_folder_path is not None:
-            self.client_secret_folder_path = client_secret_folder_path
+        if api_settings is not None:
+            self.client_secret_folder_path = api_settings.client_secret_folder_path
             self.use_client_secret = True
         self.client_secret_path = str(
-            Path(f"{client_secret_folder_path}/client_secret.json")
+            Path(f"{self.client_secret_folder_path}/client_secret.json")
         )
 
         if not self.use_cookies and not self.use_client_secret:

@@ -3,7 +3,7 @@ from .CookieFormatter import BaseCookieFormatter, NetScapeFormatter
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import PeriodEnum, TwitchClipsDownloader
 from .TwitchClipsToYoutube import TwitchClipsToYoutube
-from .YoutubeUploaderViaApi import YoutubeUploaderViaApi
+from .YoutubeUploaderViaApi import ApiUploaderSettings, YoutubeUploaderViaApi
 from .YoutubeUploaderViaCookies import (
     CookiesUploaderSettings,
     YoutubeUploaderViaCookies,
