@@ -2,8 +2,6 @@ import json
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
-
 from twitch_clips import (
     ApiUploaderSettings,
     CookiesUploaderSettings,
@@ -13,8 +11,6 @@ from twitch_clips import (
     TwitchClipsToYoutube,
     TwitchData,
 )
-
-load_dotenv()
 
 MAX_VIDEOS = 1
 
