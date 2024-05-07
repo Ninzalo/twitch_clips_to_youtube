@@ -73,6 +73,8 @@ class TwitchClipsToYoutube:
             min_duration=3,
             max_duration=60,
         )
+        if self.vertical_video_range.max_duration > 60:
+            raise ValueError("Max vertical video duration must be less than 60")
 
         self.clips_folder_path = twitch_data.clips_folder_path
 
@@ -305,7 +307,7 @@ class TwitchClipsToYoutube:
             max_duration = self.vertical_video_range.max_duration
             if (
                 clip_info.durationSeconds >= min_duration
-                and clip_info.durationSeconds <= max_duration
+                and clip_info.durationSeconds < max_duration
             ):
                 is_vertical = True
             try:
