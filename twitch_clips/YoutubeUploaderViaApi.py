@@ -12,7 +12,7 @@ from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import run_flow
 
-from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader
+from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader, VideoInfo
 from .Logger import BaseLogger, Logger
 
 
@@ -69,19 +69,24 @@ class YoutubeUploaderViaApi(BaseUploader):
 
     def upload(
         self,
-        video_path: str | Path,
-        title: str,
-        description: str | None = None,
-        tags: List[str] | None = None,
-        privacy: BasePrivacyEnum | None = None,
+        video_info: VideoInfo,
     ):
         day = 0
-        if description is None:
+
+        if video_info.description is None:
             description = ""
-        if tags is None:
+        else:
+            description = video_info.description
+
+        if video_info.tags is None:
             tags = []
-        if privacy is None:
+        else:
+            tags = video_info.tags
+
+        if video_info.privacy is None:
             privacy = BasePrivacyEnum.PUBLIC
+        else:
+            privacy = video_info.privacy
 
         self.logger.log("Uploading...")
         youtube = self.getYoutubeService()
@@ -89,7 +94,7 @@ class YoutubeUploaderViaApi(BaseUploader):
             # Define the video resource object
             body = {
                 "snippet": {
-                    "title": title,
+                    "title": video_info.title,
                     "description": description,
                     "tags": tags,
                 },
@@ -98,7 +103,7 @@ class YoutubeUploaderViaApi(BaseUploader):
             if privacy == "private":
                 body["status"]["publishAt"] = self.getScheduleDateTime(day)
             # Define the media file object
-            media_file = MediaFileUpload(video_path)
+            media_file = MediaFileUpload(video_info.video_path)
             # Call the API's videos.insert method to upload the video
             videos = youtube.videos()
             response = videos.insert(
@@ -110,6 +115,8 @@ class YoutubeUploaderViaApi(BaseUploader):
             self.logger.log(f'URL: https://www.youtube.com/watch?v={response["id"]}')
 
         except HttpError as e:
-            raise Exception(
+            raise RuntimeError(
                 f"An HTTP error {e.resp.status} occurred: {e.content.decode('utf-8')}"
-            )
+            ) from e
+        except Exception as e:
+            raise RuntimeError(f"Error uploading video: {video_info.title}") from e

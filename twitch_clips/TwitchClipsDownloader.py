@@ -225,16 +225,18 @@ class TwitchClipsDownloader:
         self.logger.log(f"Downloaded {self._count_downloaded_clips()} clips")
         return files_paths
 
-    def delete_clip_by_path(self, path: str | Path) -> None:
+    def delete_clip_by_path(self, path: str | Path) -> Tuple[bool, str]:
         self.logger.log(f"Deleting clip {path}...")
         if not isinstance(path, str):
             path = str(path)
         if Path(path).exists():
             os.remove(path)
-            self.logger.log(f"Clip deleted: {path}")
-            return
-        self.logger.log(f"Clip not found: {path}")
-        return
+            log_info = f"Clip deleted: {path}"
+            self.logger.log(log_info)
+            return True, log_info
+        log_info = f"Clip not found: {path}"
+        self.logger.log(log_info)
+        return False, log_info
 
     def delete_all_clips(self) -> None:
         self.logger.log("Cleaning clips folder...")

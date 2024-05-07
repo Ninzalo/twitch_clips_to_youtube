@@ -1,4 +1,4 @@
-from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader
+from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader, VideoInfo
 from .CookieFormatter import BaseCookieFormatter, NetScapeFormatter
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import PeriodEnum, TwitchClipsDownloader, TwitchData

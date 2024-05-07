@@ -2,9 +2,9 @@ import argparse
 import os
 import time
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
-from .BaseYoutubeUploader import BaseUploader
+from .BaseYoutubeUploader import BaseUploader, VideoInfo
 from .CookieFormatter import NetScapeFormatter
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import ClipInfo, TwitchClipsDownloader, TwitchData
@@ -51,6 +51,9 @@ class TwitchClipsToYoutube:
 
         if not self.use_cookies and not self.use_client_secret:
             raise ValueError("No cookies or client secret provided")
+
+        self.custom_description: str | None = None
+        self.custom_tags: List[str] | None = None
 
         self.clips_folder_path = twitch_data.clips_folder_path
 
@@ -123,20 +126,60 @@ class TwitchClipsToYoutube:
         )
         return filtered_clips_info_by_used_titles
 
-    def _publish_clip(self, clip_info: ClipInfo, yt_uploader: BaseUploader) -> None:
-        clip_path = self.twitch_downloader.download_clip(
-            clip_slug=clip_info.slug, clip_id=clip_info.id
-        )
-        title_with_author = f"{clip_info.title} @{clip_info.broadcaster}"
+    def _download_clip(self, clip_info: ClipInfo) -> Path:
+        try:
+            clip_path = self.twitch_downloader.download_clip(
+                clip_slug=clip_info.slug, clip_id=clip_info.id
+            )
+            return clip_path
+        except Exception as e:
+            raise RuntimeError(f"Failed to download clip: {clip_info.slug}") from e
+
+    def _generate_video_metadata(
+        self, clip_info: ClipInfo, is_shorts: bool | None = None
+    ) -> Tuple[str, str, List[str]]:
+        title_with_author = f"{clip_info.title} #{clip_info.broadcaster}"
+        if is_shorts:
+            title_with_author += r" #shorts"
         description = f"Streamer: https://www.twitch.tv/{clip_info.broadcaster}"
-        yt_uploader.upload(
-            video_path=clip_path,
-            title=title_with_author,
-            description=description,
-            tags=None,
-            privacy=None,
+        if self.custom_description is not None:
+            description += f"\n\n{self.custom_description}"
+        tags = [f"{clip_info.broadcaster}", "twitch", "twitchclips", "твич"]
+        if self.custom_tags is not None:
+            for tag in self.custom_tags:
+                tags.append(tag)
+        return title_with_author, description, tags
+
+    def _publish_clip(
+        self,
+        clip_info: ClipInfo,
+        yt_uploader: BaseUploader,
+        is_shorts: bool | None = None,
+    ) -> None:
+        try:
+            clip_path = self._download_clip(clip_info=clip_info)
+        except RuntimeError as e:
+            raise e
+        title_with_author, description, tags = self._generate_video_metadata(
+            clip_info=clip_info, is_shorts=is_shorts
         )
-        self.twitch_downloader.delete_clip_by_path(path=clip_path)
+        try:
+            yt_uploader.upload(
+                VideoInfo(
+                    video_path=clip_path,
+                    title=title_with_author,
+                    description=description,
+                    tags=tags,
+                    privacy=None,
+                )
+            )
+        except RuntimeError as e:
+            raise e
+        deletion_status, log_info = self.twitch_downloader.delete_clip_by_path(
+            path=clip_path
+        )
+        if not deletion_status:
+            raise RuntimeError(log_info)
         self.used_titles.append(clip_info.title)
 
     def run(self) -> None:
@@ -199,9 +242,16 @@ class TwitchClipsToYoutube:
         )
 
         for clip_info in sorted_clips_info_by_views[: self.max_videos]:
+            is_shorts = False
+            if clip_info.durationSeconds >= 15 and clip_info.durationSeconds <= 60:
+                pass
             try:
-                self._publish_clip(clip_info=clip_info, yt_uploader=yt_uploader)
-            except Exception as e:
+                self._publish_clip(
+                    clip_info=clip_info,
+                    yt_uploader=yt_uploader,
+                    is_shorts=is_shorts,
+                )
+            except RuntimeError as e:
                 self.logger.log(f"FInished due to an error: {e}")
                 break
 

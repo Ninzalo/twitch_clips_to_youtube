@@ -6,7 +6,7 @@ from typing import List
 
 from youtube_up import AllowCommentsEnum, Metadata, PrivacyEnum, YTUploaderSession
 
-from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader
+from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader, VideoInfo
 from .Logger import BaseLogger, Logger
 
 
@@ -66,30 +66,36 @@ class YoutubeUploaderViaCookies(BaseUploader):
 
     def upload(
         self,
-        video_path: str | Path,
-        title: str,
-        description: str | None = None,
-        tags: List[str] | None = None,
-        privacy: BasePrivacyEnum | None = None,
+        video_info: VideoInfo,
     ) -> None:
         privacy_status = PrivacyEnum.PUBLIC
-        if description is None:
+
+        if video_info.description is None:
             description = ""
-        if privacy is None:
-            privacy_status = PrivacyEnum.PUBLIC
-        if not isinstance(video_path, str):
-            video_path = str(video_path)
-        if tags is None:
+        else:
+            description = video_info.description
+
+        if not isinstance(video_info.video_path, str):
+            video_path = str(video_info.video_path)
+        else:
+            video_path = video_info.video_path
+
+        if video_info.tags is None:
             tags = []
-        if privacy is not None:
-            if privacy == BasePrivacyEnum.PRIVATE:
+        else:
+            tags = video_info.tags
+
+        if video_info.privacy is None:
+            privacy_status = PrivacyEnum.PUBLIC
+        if video_info.privacy is not None:
+            if video_info.privacy == BasePrivacyEnum.PRIVATE:
                 privacy_status = PrivacyEnum.PRIVATE
-            if privacy == BasePrivacyEnum.PUBLIC:
+            if video_info.privacy == BasePrivacyEnum.PUBLIC:
                 privacy_status = PrivacyEnum.PUBLIC
 
-        self.logger.log(f"Uploading video: {title}")
+        self.logger.log(f"Uploading video: {video_info.title}")
         video_metadata = Metadata(
-            title=title,
+            title=video_info.title,
             description=description,
             privacy=privacy_status,
             made_for_kids=False,
@@ -98,6 +104,6 @@ class YoutubeUploaderViaCookies(BaseUploader):
         )
         try:
             self.uploader.upload(file_path=video_path, metadata=video_metadata)
-            self.logger.log(f"Video uploaded: {title}")
+            self.logger.log(f"Video uploaded: {video_info.title}")
         except Exception as e:
-            raise RuntimeError(f"Error uploading video: {title}") from e
+            raise RuntimeError(f"Error uploading video: {video_info.title}") from e

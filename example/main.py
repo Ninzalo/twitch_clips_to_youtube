@@ -61,6 +61,7 @@ logger = Logger(debug_mode=DEBUG_MODE)
 if __name__ == "__main__":
 
     uploader = TwitchClipsToYoutube(
+        max_videos_to_upload=MAX_VIDEOS,
         cookies_settings=CookiesUploaderSettings(
             cookies_folder_path=COOKIES_FOLDER_PATH,
             cookies_validation_retries=COOKIES_VALIDATION_RETRIES,
@@ -68,7 +69,6 @@ if __name__ == "__main__":
         api_settings=ApiUploaderSettings(
             client_secret_folder_path=CLIENT_SECRET_FOLDER_PATH
         ),
-        max_videos_to_upload=MAX_VIDEOS,
         twitch_data=TwitchData(
             channels_urls=TWICH_URLS,
             clips_folder_path=CLIPS_FOLDER_PATH,
