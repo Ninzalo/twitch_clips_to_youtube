@@ -1,6 +1,7 @@
 import argparse
 import os
 import time
+from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Tuple
 
@@ -8,6 +9,7 @@ from .BaseYoutubeUploader import BaseUploader, VideoInfo
 from .CookieFormatter import NetScapeFormatter
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import ClipInfo, TwitchClipsDownloader, TwitchData
+from .VerticalVideoConverter import VerticalVideoConverter
 from .YoutubeUploaderViaApi import ApiUploaderSettings, YoutubeUploaderViaApi
 from .YoutubeUploaderViaCookies import (
     CookiesUploaderSettings,
@@ -19,6 +21,12 @@ from .YoutubeUploaderViaCookies import (
 class CustomVideoMetadata:
     custom_description: str | None = None
     custom_tags: List[str] | None = None
+
+
+@dataclass
+class VerticalVideoRange:
+    min_duration: int
+    max_duration: int
 
 
 class TwitchClipsToYoutube:
@@ -60,6 +68,11 @@ class TwitchClipsToYoutube:
             raise ValueError("No cookies or client secret provided")
 
         self.custom_metadata = custom_metadata
+
+        self.vertical_video_range = VerticalVideoRange(
+            min_duration=3,
+            max_duration=60,
+        )
 
         self.clips_folder_path = twitch_data.clips_folder_path
 
@@ -140,13 +153,13 @@ class TwitchClipsToYoutube:
             raise RuntimeError(f"Failed to download clip: {clip_info.slug}") from e
 
     def _generate_video_metadata(
-        self, clip_info: ClipInfo, is_shorts: bool | None = None
+        self, clip_info: ClipInfo, is_vertical: bool | None = None
     ) -> Tuple[str, str, List[str]]:
         title_with_author = f"{clip_info.title} #{clip_info.broadcaster}"
-        if is_shorts:
+        if is_vertical:
             title_with_author += r" #shorts"
         description = f"Streamer: https://www.twitch.tv/{clip_info.broadcaster}"
-        tags = [f"{clip_info.broadcaster}", "twitch", "twitchclips", "твич"]
+        tags = [f"{clip_info.broadcaster}"]
         if self.custom_metadata is not None:
             if self.custom_metadata.custom_description is not None:
                 description += f"\n\n{self.custom_metadata.custom_description}"
@@ -155,19 +168,59 @@ class TwitchClipsToYoutube:
                     tags.append(tag)
         return title_with_author, description, tags
 
+    def _convert_clip_to_vertical(
+        self, clip_path: Path, clip_info: ClipInfo
+    ) -> str | Path:
+        try:
+            background_file_path = VerticalVideoConverter.create_background_file(
+                output_file_path=Path(
+                    f"{self.clips_folder_path}/{clip_info.id}_background.mp4"
+                ),
+                duration=clip_info.durationSeconds,
+                framerate=clip_info.framerate,
+            )
+            vertical_video_path = VerticalVideoConverter.create_vertical_video(
+                clip_path=clip_path,
+                background_path=background_file_path,
+                output_path=Path(
+                    f"{self.clips_folder_path}/{clip_info.id}_vertical.mp4"
+                ),
+            )
+            deletion_status, log_info = self.twitch_downloader.delete_clip_by_path(
+                path=background_file_path
+            )
+            if not deletion_status:
+                self.logger.log(f"{log_info}")
+            deletion_status, log_info = self.twitch_downloader.delete_clip_by_path(
+                path=clip_path
+            )
+            if not deletion_status:
+                self.logger.log(f"{log_info}")
+            return vertical_video_path
+        except Exception as e:
+            raise RuntimeError(e) from e
+
     def _publish_clip(
         self,
         clip_info: ClipInfo,
         yt_uploader: BaseUploader,
-        is_shorts: bool | None = None,
+        is_vertical: bool | None = None,
     ) -> None:
         try:
             clip_path = self._download_clip(clip_info=clip_info)
         except RuntimeError as e:
             raise e
         title_with_author, description, tags = self._generate_video_metadata(
-            clip_info=clip_info, is_shorts=is_shorts
+            clip_info=clip_info, is_vertical=is_vertical
         )
+        if is_vertical:
+            try:
+                vertical_video_path = self._convert_clip_to_vertical(
+                    clip_path=clip_path, clip_info=clip_info
+                )
+                clip_path = vertical_video_path
+            except RuntimeError as e:
+                self.logger.log(f"{e}")
         try:
             yt_uploader.upload(
                 VideoInfo(
@@ -180,12 +233,12 @@ class TwitchClipsToYoutube:
             )
         except RuntimeError as e:
             raise e
+        self.used_titles.append(clip_info.title)
         deletion_status, log_info = self.twitch_downloader.delete_clip_by_path(
             path=clip_path
         )
         if not deletion_status:
             raise RuntimeError(log_info)
-        self.used_titles.append(clip_info.title)
 
     def run(self) -> None:
         yt_uploader = None
@@ -247,14 +300,19 @@ class TwitchClipsToYoutube:
         )
 
         for clip_info in sorted_clips_info_by_views[: self.max_videos]:
-            is_shorts = False
-            if clip_info.durationSeconds >= 15 and clip_info.durationSeconds <= 60:
-                pass
+            is_vertical = False
+            min_duration = self.vertical_video_range.min_duration
+            max_duration = self.vertical_video_range.max_duration
+            if (
+                clip_info.durationSeconds >= min_duration
+                and clip_info.durationSeconds <= max_duration
+            ):
+                is_vertical = True
             try:
                 self._publish_clip(
                     clip_info=clip_info,
                     yt_uploader=yt_uploader,
-                    is_shorts=is_shorts,
+                    is_vertical=is_vertical,
                 )
             except RuntimeError as e:
                 self.logger.log(f"FInished due to an error: {e}")

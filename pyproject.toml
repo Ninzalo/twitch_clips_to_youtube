@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "twitch-clips"
-version = "1.4.7"
+version = "1.5.0"
 description = ""
 authors = ["Ninzalo <k-artemiy@mail.ru>"]
 license = "MIT"
@@ -19,6 +19,7 @@ pytz = "^2024.1"
 google-api-python-client = "^2.127.0"
 blinker = "1.7"
 setuptools = "^69.5.1"
+moviepy = {git = "https://github.com/Zulko/moviepy.git"}
 
 
 [build-system]
