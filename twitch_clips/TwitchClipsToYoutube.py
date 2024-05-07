@@ -15,11 +15,18 @@ from .YoutubeUploaderViaCookies import (
 )
 
 
+@dataclass
+class CustomVideoMetadata:
+    custom_description: str | None = None
+    custom_tags: List[str] | None = None
+
+
 class TwitchClipsToYoutube:
     def __init__(
         self,
         max_videos_to_upload: int,
         twitch_data: TwitchData,
+        custom_metadata: CustomVideoMetadata | None = None,
         cookies_settings: CookiesUploaderSettings | None = None,
         api_settings: ApiUploaderSettings | None = None,
         logger: BaseLogger | None = None,
@@ -52,8 +59,7 @@ class TwitchClipsToYoutube:
         if not self.use_cookies and not self.use_client_secret:
             raise ValueError("No cookies or client secret provided")
 
-        self.custom_description: str | None = None
-        self.custom_tags: List[str] | None = None
+        self.custom_metadata = custom_metadata
 
         self.clips_folder_path = twitch_data.clips_folder_path
 
@@ -142,12 +148,13 @@ class TwitchClipsToYoutube:
         if is_shorts:
             title_with_author += r" #shorts"
         description = f"Streamer: https://www.twitch.tv/{clip_info.broadcaster}"
-        if self.custom_description is not None:
-            description += f"\n\n{self.custom_description}"
         tags = [f"{clip_info.broadcaster}", "twitch", "twitchclips", "твич"]
-        if self.custom_tags is not None:
-            for tag in self.custom_tags:
-                tags.append(tag)
+        if self.custom_metadata is not None:
+            if self.custom_metadata.custom_description is not None:
+                description += f"\n\n{self.custom_metadata.custom_description}"
+            if self.custom_metadata.custom_tags is not None:
+                for tag in self.custom_metadata.custom_tags:
+                    tags.append(tag)
         return title_with_author, description, tags
 
     def _publish_clip(
