@@ -37,6 +37,8 @@ class ClipInfo:
     viewCount: int
     durationSeconds: int
     broadcaster: str
+    quality: str
+    framerate: int
 
 
 class TwitchClipsDownloader:
@@ -94,6 +96,14 @@ class TwitchClipsDownloader:
         return all_clips_json
 
     def generate_clip_info_dcls(self, clip_dict: dict) -> ClipInfo:
+        default_quality_dict = {
+            "videoQualities": [
+                {
+                    "frameRate": 30,
+                    "quality": "360",
+                }
+            ]
+        }
         return ClipInfo(
             id=clip_dict["id"],
             slug=clip_dict["slug"],
@@ -101,6 +111,14 @@ class TwitchClipsDownloader:
             viewCount=clip_dict["viewCount"],
             durationSeconds=clip_dict["durationSeconds"],
             broadcaster=clip_dict["broadcaster"]["login"],
+            quality=clip_dict.get(
+                "videoQualities", default_quality_dict.get("videoQualities")
+            )[0].get("quality"),
+            framerate=int(
+                clip_dict.get(
+                    "videoQualities", default_quality_dict.get("videoQualities")
+                )[0].get("frameRate")
+            ),
         )
 
     def generate_clips_info(self, clips_json: List[dict]) -> List[ClipInfo]:
@@ -187,24 +205,24 @@ class TwitchClipsDownloader:
         return sorted_clips_info
 
     def download_clip(
-        self, clip_slug: str, clip_id: str, clip_format: str | None = None
+        self, clip_info: ClipInfo, clip_format: str | None = None
     ) -> Path:
-        self.logger.log(f"Downloading clip {clip_slug}...")
+        self.logger.log(f"Downloading clip {clip_info.slug}...")
         if not clip_format:
             clip_format = "mp4"
-        file_path = f"{self.clips_folder_path}{clip_id}.{clip_format}"
+        file_path = f"{self.clips_folder_path}{clip_info.id}.{clip_format}"
         command = [
             "twitch-dl",
             "download",
-            clip_slug,
+            clip_info.slug,
             "-q",
-            "source",
+            f"{clip_info.quality}p",
             "--overwrite",
             "-o",
             file_path,
         ]
         subprocess.check_output(command)
-        self.logger.log(f"Downloaded clip {clip_slug}")
+        self.logger.log(f"Downloaded clip {clip_info.slug}")
         return Path(file_path)
 
     def download_multiple_clips(
@@ -217,8 +235,7 @@ class TwitchClipsDownloader:
         files_paths = []
         for clip_info in clips_info:
             file_path = self.download_clip(
-                clip_slug=clip_info.slug,
-                clip_id=clip_info.id,
+                clip_info=clip_info,
                 clip_format=clips_format,
             )
             files_paths.append(Path(file_path))

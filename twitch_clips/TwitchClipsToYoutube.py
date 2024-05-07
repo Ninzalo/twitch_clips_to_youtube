@@ -134,9 +134,7 @@ class TwitchClipsToYoutube:
 
     def _download_clip(self, clip_info: ClipInfo) -> Path:
         try:
-            clip_path = self.twitch_downloader.download_clip(
-                clip_slug=clip_info.slug, clip_id=clip_info.id
-            )
+            clip_path = self.twitch_downloader.download_clip(clip_info=clip_info)
             return clip_path
         except Exception as e:
             raise RuntimeError(f"Failed to download clip: {clip_info.slug}") from e
