@@ -1,12 +1,11 @@
 import argparse
 import os
-import time
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Tuple
 
 from .BaseYoutubeUploader import BaseUploader, VideoInfo
-from .CookieFormatter import NetScapeFormatter
+from .CookieFormatter import JSONNetScapeFormatter, StdinNetScapeFormatter
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import ClipInfo, TwitchClipsDownloader, TwitchData
 from .VerticalVideoConverter import VerticalVideoConverter
@@ -39,6 +38,23 @@ class TwitchClipsToYoutube:
         api_settings: ApiUploaderSettings | None = None,
         logger: BaseLogger | None = None,
     ) -> None:
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            "--cookies",
+            "-c",
+            action="store_true",
+            help="Use cookies from stdin",
+            dest="use_stdin_cookies",
+        )
+        parser.add_argument(
+            "--client_secret",
+            "-C",
+            action="store_true",
+            help="Use client-secret mode (unsecure)",
+            dest="allow_client_secret",
+        )
+        self.args = parser.parse_args()
+
         self.logger = logger if logger else Logger()
 
         self.max_videos = max_videos_to_upload
@@ -54,6 +70,17 @@ class TwitchClipsToYoutube:
             self.use_cookies = True
         self.json_cookies_path = str(Path(f"{self.cookies_folder_path}/cookies.json"))
         self.cookies_path = str(Path(f"{self.cookies_folder_path}/cookies.txt"))
+        if self.args.use_stdin_cookies:
+            try:
+                StdinNetScapeFormatter(logger=self.logger).save(
+                    formatted_cookies_file_path=self.cookies_path,
+                    unformatted_cookies_file_path="",
+                )
+                self.use_cookies = True
+            except ValueError as e:
+                raise e
+            except Exception as e:
+                raise e
 
         self.client_secret_folder_path = f"{os.getcwd()}"
         self.use_client_secret = False
@@ -99,7 +126,6 @@ class TwitchClipsToYoutube:
         if not Path(self.clips_folder_path).exists():
             self.logger.log("Clips folder doesn't exist. Creating new one...")
             Path(self.clips_folder_path).mkdir(parents=True, exist_ok=True)
-            time.sleep(5)
 
     def _check_cookies_file(self) -> bool:
         if not Path(self.cookies_folder_path).exists():
@@ -109,9 +135,9 @@ class TwitchClipsToYoutube:
         if not Path(self.cookies_path).exists():
             if Path(self.json_cookies_path).exists():
                 try:
-                    netscape_formatter = NetScapeFormatter(logger=self.logger)
+                    netscape_formatter = JSONNetScapeFormatter(logger=self.logger)
                     netscape_formatter.save(
-                        json_cookies_file_path=self.json_cookies_path,
+                        unformatted_cookies_file_path=self.json_cookies_path,
                         formatted_cookies_file_path=self.cookies_path,
                     )
                     return True
@@ -256,17 +282,21 @@ class TwitchClipsToYoutube:
                     yt_uploader = None
                 else:
                     self.logger.log("Cookies-Uploader initialized.")
-        if yt_uploader is None and self.use_client_secret:
-            parser = argparse.ArgumentParser()
-            parser.add_argument(
-                "--force",
-                "-f",
-                action="store_true",
-                help="Force run unsafe API uploader",
-                required=True,
+        if (
+            yt_uploader is None
+            and self.use_client_secret
+            and not self.args.allow_client_secret
+        ):
+            raise RuntimeError(
+                "API-Uploader (client-secret mode) is not allowed. "
+                "Run the script with --client_secret flag."
             )
-            _ = parser.parse_args()
-            self.logger.log("Forced unsafe API uploader.")
+        if (
+            yt_uploader is None
+            and self.use_client_secret
+            and self.args.allow_client_secret
+        ):
+            self.logger.log("Forcing API-Uploader (client-secret mode)")
             if self._check_client_secret_file():
                 try:
                     yt_uploader = YoutubeUploaderViaApi(
