@@ -106,4 +106,6 @@ class YoutubeUploaderViaCookies(BaseUploader):
             self.uploader.upload(file_path=video_path, metadata=video_metadata)
             self.logger.log(f"Video uploaded: {video_info.title}")
         except Exception as e:
-            raise RuntimeError(f"Error uploading video: {video_info.title}") from e
+            raise RuntimeError(
+                f"Error uploading video: {video_info.title} ({e})"
+            ) from e

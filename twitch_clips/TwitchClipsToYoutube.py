@@ -347,7 +347,8 @@ class TwitchClipsToYoutube:
                     is_vertical=is_vertical,
                 )
             except RuntimeError as e:
-                self.logger.log(f"FInished due to an error: {e}")
+                self.logger.log("Finished due to an error")
+                self.logger.log(f"{e}")
                 break
 
         self.twitch_downloader.delete_all_clips()

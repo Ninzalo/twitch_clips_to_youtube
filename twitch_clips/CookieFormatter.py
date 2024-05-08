@@ -122,7 +122,7 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         )
 
     def _read_stdin(self) -> List[str]:
-        print("Input Cookie (Press Enter to finish):")
+        print("Input Cookie (Press Enter to finish input | Ctrl + C to cancel):")
         cookies = []
         while True:
             try:

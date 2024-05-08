@@ -207,7 +207,7 @@ class TwitchClipsDownloader:
     def download_clip(
         self, clip_info: ClipInfo, clip_format: str | None = None
     ) -> Path:
-        self.logger.log(f"Downloading clip {clip_info.slug}...")
+        self.logger.log(f"Downloading clip {clip_info.title} by {clip_info.slug}...")
         if not clip_format:
             clip_format = "mp4"
         file_path = f"{self.clips_folder_path}{clip_info.id}.{clip_format}"
