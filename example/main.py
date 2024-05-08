@@ -3,7 +3,6 @@ import os
 from pathlib import Path
 
 from twitch_clips import (
-    ApiUploaderSettings,
     CookiesUploaderSettings,
     CustomVideoMetadata,
     Logger,
@@ -79,9 +78,6 @@ if __name__ == "__main__":
         cookies_settings=CookiesUploaderSettings(
             cookies_folder_path=COOKIES_FOLDER_PATH,
             cookies_validation_retries=COOKIES_VALIDATION_RETRIES,
-        ),
-        api_settings=ApiUploaderSettings(
-            client_secret_folder_path=CLIENT_SECRET_FOLDER_PATH
         ),
         logger=logger,
     )
