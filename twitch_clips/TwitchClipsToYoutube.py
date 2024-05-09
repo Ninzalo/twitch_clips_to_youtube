@@ -101,7 +101,7 @@ class TwitchClipsToYoutube:
         except Exception:
             return None, False
 
-    def _stdin_to_cookies(self) -> bool:
+    def _stdin_to_cookies(self) -> None:
         if self.args.use_stdin_cookies:
             try:
                 StdinNetScapeFormatter(logger=self.logger).save(
@@ -112,23 +112,21 @@ class TwitchClipsToYoutube:
                 raise e
             except Exception as e:
                 raise e
-            return True
-        return False
 
     def _get_uploader(self) -> BaseUploader:
         if self._check_cookies_file():
             yt_uploader, is_valid = self._get_cookies_uploader()
             if yt_uploader is not None and is_valid:
                 return yt_uploader
-            if self._stdin_to_cookies():
-                yt_uploader, _ = self._get_cookies_uploader()
-                if yt_uploader is not None:
-                    return yt_uploader
+            self._stdin_to_cookies()
+            yt_uploader, _ = self._get_cookies_uploader()
+            if yt_uploader is not None:
+                return yt_uploader
         else:
-            if self._stdin_to_cookies():
-                yt_uploader, _ = self._get_cookies_uploader()
-                if yt_uploader is not None:
-                    return yt_uploader
+            self._stdin_to_cookies()
+            yt_uploader, _ = self._get_cookies_uploader()
+            if yt_uploader is not None:
+                return yt_uploader
         raise ValueError("No valid cookies or client secret provided")
 
     def _check_cookies_file(self) -> bool:
