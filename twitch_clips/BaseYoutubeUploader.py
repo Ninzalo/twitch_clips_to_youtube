@@ -12,7 +12,7 @@ class BasePrivacyEnum(str, Enum):
 
 @dataclass
 class VideoInfo:
-    video_path: str | Path
+    video_path: Path
     title: str
     description: str | None = None
     tags: List[str] | None = None

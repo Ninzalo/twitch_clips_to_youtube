@@ -13,8 +13,8 @@ class BaseCookieFormatter(ABC):
     @abstractmethod
     def save(
         self,
-        formatted_cookies_file_path: str | Path,
-        unformatted_cookies_file_path: str | Path,
+        formatted_cookies_file_path: Path,
+        unformatted_cookies_file_path: Path,
     ) -> None:
         """Formats cookies to a file"""
 
@@ -25,8 +25,8 @@ class JSONNetScapeFormatter(BaseCookieFormatter):
 
     def save(
         self,
-        formatted_cookies_file_path: str | Path,
-        unformatted_cookies_file_path: str | Path,
+        formatted_cookies_file_path: Path,
+        unformatted_cookies_file_path: Path,
     ) -> None:
         """Formats JSON cookies to Netscape format and saves it to a file"""
         self.logger.log("Formatting JSON cookies to Netscape format...")
@@ -50,16 +50,16 @@ class JSONNetScapeFormatter(BaseCookieFormatter):
 
     @staticmethod
     def _read_json_cookies_file(
-        json_cookies_file_path: str | Path,
+        json_cookies_file_path: Path,
     ) -> List[dict]:
-        if Path(json_cookies_file_path).exists():
+        if json_cookies_file_path.exists():
             with open(json_cookies_file_path, "r", encoding="utf-8") as file:
                 return json.load(file)
         raise ValueError("JSON cookie file doesn't exist")
 
     @staticmethod
     def _save_cookies_to_file(
-        netscape_string: str, formatted_cookies_file_path: str | Path
+        netscape_string: str, formatted_cookies_file_path: Path
     ) -> None:
         with open(formatted_cookies_file_path, "w", encoding="utf-8") as file:
             netscape_header_text = (
@@ -108,8 +108,8 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
 
     def save(
         self,
-        formatted_cookies_file_path: str | Path,
-        unformatted_cookies_file_path: str | Path,
+        formatted_cookies_file_path: Path,
+        unformatted_cookies_file_path: Path,
     ) -> None:
         self.logger.log("Reading cookies from STDIN...")
         unformatted_cookies = self._read_stdin()
@@ -175,7 +175,7 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
 
     @staticmethod
     def _save_cookies_to_file(
-        netscape_string: str, formatted_cookies_file_path: str | Path
+        netscape_string: str, formatted_cookies_file_path: Path
     ) -> None:
         with open(formatted_cookies_file_path, "w", encoding="utf-8") as file:
             netscape_header_text = (

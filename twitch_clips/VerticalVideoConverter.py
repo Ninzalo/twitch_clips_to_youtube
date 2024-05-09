@@ -7,12 +7,12 @@ from moviepy.editor import ColorClip, CompositeVideoClip, VideoFileClip
 class VerticalVideoConverter:
     @staticmethod
     def create_background_file(
-        output_file_path: str | Path,
+        output_file_path: Path,
         duration: int,
         framerate: int,
         size: Tuple[int, int] | None = None,
         color: Tuple[int, int, int] | None = None,
-    ) -> str | Path:
+    ) -> Path:
         if color is None:
             color = (0, 0, 0)
         if size is None:
@@ -23,16 +23,16 @@ class VerticalVideoConverter:
                 color=color,
                 duration=duration,
             ).write_videofile(str(output_file_path), fps=framerate)
-            return output_file_path
+            return Path(output_file_path)
         except Exception as e:
             raise RuntimeError("Error creating background file") from e
 
     @staticmethod
     def create_vertical_video(
-        clip_path: str | Path,
-        background_path: str | Path,
-        output_path: str | Path,
-    ) -> str | Path:
+        clip_path: Path,
+        background_path: Path,
+        output_path: Path,
+    ) -> Path:
         try:
             clip = VideoFileClip(str(clip_path))
             clip = clip.subclip(0, clip.duration)

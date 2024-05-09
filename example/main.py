@@ -17,11 +17,9 @@ DEBUG_MODE = True
 
 COOKIES_VALIDATION_RETRIES = 5
 
-COOKIES_FOLDER_PATH = str(Path(f"{os.getcwd()}/cookies"))
+COOKIES_FOLDER_PATH = Path(f"{os.getcwd()}/cookies")
 
-CLIENT_SECRET_FOLDER_PATH = str(Path(f"{os.getcwd()}/client_secret"))
-
-CLIPS_FOLDER_PATH = f"{os.getcwd()}/clips/"
+CLIPS_FOLDER_PATH = Path(f"{os.getcwd()}/clips/")
 
 CLIPS_PER_TWITCH_CHANNEL_LIMIT = None
 

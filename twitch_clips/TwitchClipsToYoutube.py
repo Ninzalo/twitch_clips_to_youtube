@@ -54,8 +54,8 @@ class TwitchClipsToYoutube:
 
         self.cookies_folder_path = cookies_settings.cookies_folder_path
         self.retries = cookies_settings.cookies_validation_retries
-        self.json_cookies_path = str(Path(f"{self.cookies_folder_path}/cookies.json"))
-        self.cookies_path = str(Path(f"{self.cookies_folder_path}/cookies.txt"))
+        self.json_cookies_path = Path(f"{self.cookies_folder_path}/cookies.json")
+        self.cookies_path = Path(f"{self.cookies_folder_path}/cookies.txt")
 
         self.yt_uploader = self._get_uploader()
 
@@ -83,7 +83,7 @@ class TwitchClipsToYoutube:
         )
 
     def _create_clips_folder(self) -> None:
-        cookies_folder = Path(self.cookies_folder_path)
+        cookies_folder = self.cookies_folder_path
         if not cookies_folder.exists():
             self.logger.log("Clips folder doesn't exist. Creating new one...")
             cookies_folder.mkdir(parents=True, exist_ok=True)
@@ -108,7 +108,7 @@ class TwitchClipsToYoutube:
             try:
                 StdinNetScapeFormatter(logger=self.logger).save(
                     formatted_cookies_file_path=self.cookies_path,
-                    unformatted_cookies_file_path="",
+                    unformatted_cookies_file_path=Path(""),
                 )
             except ValueError as e:
                 raise e
@@ -134,9 +134,9 @@ class TwitchClipsToYoutube:
         raise ValueError("No valid cookies or client secret provided")
 
     def _check_cookies_file(self) -> bool:
-        cookies_folder = Path(self.cookies_folder_path)
-        cookies_path = Path(self.cookies_path)
-        json_cookies_path = Path(self.json_cookies_path)
+        cookies_folder = self.cookies_folder_path
+        cookies_path = self.cookies_path
+        json_cookies_path = self.json_cookies_path
         if not cookies_folder.exists():
             self.logger.log("Cookies folder doesn't exist. Creating new one...")
             cookies_folder.mkdir(parents=True, exist_ok=True)
@@ -189,9 +189,7 @@ class TwitchClipsToYoutube:
                 tags.extend(self.custom_metadata.custom_tags)
         return title_with_author, description, tags
 
-    def _convert_clip_to_vertical(
-        self, clip_path: Path, clip_info: ClipInfo
-    ) -> str | Path:
+    def _convert_clip_to_vertical(self, clip_path: Path, clip_info: ClipInfo) -> Path:
         try:
             background_file_path = VerticalVideoConverter.create_background_file(
                 output_file_path=Path(

@@ -2,7 +2,6 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 from random import randint
-from typing import List
 
 from youtube_up import AllowCommentsEnum, Metadata, PrivacyEnum, YTUploaderSession
 
@@ -12,14 +11,14 @@ from .Logger import BaseLogger, Logger
 
 @dataclass
 class CookiesUploaderSettings:
-    cookies_folder_path: str | Path
+    cookies_folder_path: Path
     cookies_validation_retries: int
 
 
 class YoutubeUploaderViaCookies(BaseUploader):
     def __init__(
         self,
-        cookies_path: str | Path,
+        cookies_path: Path,
         retries: int | None = None,
         logger: BaseLogger | None = None,
     ) -> None:
@@ -70,20 +69,9 @@ class YoutubeUploaderViaCookies(BaseUploader):
     ) -> None:
         privacy_status = PrivacyEnum.PUBLIC
 
-        if video_info.description is None:
-            description = ""
-        else:
-            description = video_info.description
+        description = video_info.description or ""
 
-        if not isinstance(video_info.video_path, str):
-            video_path = str(video_info.video_path)
-        else:
-            video_path = video_info.video_path
-
-        if video_info.tags is None:
-            tags = []
-        else:
-            tags = video_info.tags
+        tags = video_info.tags or []
 
         if video_info.privacy is None:
             privacy_status = PrivacyEnum.PUBLIC
@@ -103,7 +91,9 @@ class YoutubeUploaderViaCookies(BaseUploader):
             tags=tags,
         )
         try:
-            self.uploader.upload(file_path=video_path, metadata=video_metadata)
+            self.uploader.upload(
+                file_path=str(video_info.video_path), metadata=video_metadata
+            )
             self.logger.log(f"Video uploaded: {video_info.title}")
         except Exception as e:
             raise RuntimeError(

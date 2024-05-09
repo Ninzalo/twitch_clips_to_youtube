@@ -22,7 +22,7 @@ class PeriodEnum(str, Enum):
 @dataclass
 class TwitchData:
     channels_urls: List[str]
-    clips_folder_path: str
+    clips_folder_path: Path
     clips_period: PeriodEnum | None = None
     clips_per_channel_limit: int | None = None
     unsupported_words_for_title: List[str] | None = None
@@ -45,7 +45,7 @@ class TwitchClipsDownloader:
     def __init__(
         self,
         twitch_urls: List[str],
-        clips_folder_path: str,
+        clips_folder_path: Path,
         logger: BaseLogger | None = None,
     ):
         self.clips_folder_path = clips_folder_path
@@ -242,11 +242,9 @@ class TwitchClipsDownloader:
         self.logger.log(f"Downloaded {self._count_downloaded_clips()} clips")
         return files_paths
 
-    def delete_clip_by_path(self, path: str | Path) -> Tuple[bool, str]:
+    def delete_clip_by_path(self, path: Path) -> Tuple[bool, str]:
         self.logger.log(f"Deleting clip {path}...")
-        if not isinstance(path, str):
-            path = str(path)
-        if Path(path).exists():
+        if path.exists():
             os.remove(path)
             log_info = f"Clip deleted: {path}"
             self.logger.log(log_info)
@@ -260,7 +258,7 @@ class TwitchClipsDownloader:
         for dirs, _, files in os.walk(self.clips_folder_path):
             for file in files:
                 file_path = os.path.join(dirs, file)
-                self.delete_clip_by_path(path=file_path)
+                self.delete_clip_by_path(path=Path(file_path))
         self.logger.log("Clips folder cleaned!")
 
     def _count_downloaded_clips(self) -> int:
