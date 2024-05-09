@@ -112,6 +112,8 @@ class TwitchClipsToYoutube:
                 raise e
             except Exception as e:
                 raise e
+            return
+        raise RuntimeError("Unable to read cookies from stdin. Use --cookies flag.")
 
     def _get_uploader(self) -> BaseUploader:
         if self._check_cookies_file():
