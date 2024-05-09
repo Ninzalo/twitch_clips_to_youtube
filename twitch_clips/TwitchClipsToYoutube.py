@@ -51,7 +51,6 @@ class TwitchClipsToYoutube:
         assert self.max_videos > 0, "Max videos must be at least 1"
 
         self.cookies_folder_path = cookies_settings.cookies_folder_path
-        self._create_clips_folder(self.cookies_folder_path)
         self.retries = cookies_settings.cookies_validation_retries
         self.json_cookies_path = Path(f"{self.cookies_folder_path}/cookies.json")
         self.cookies_path = Path(f"{self.cookies_folder_path}/cookies.txt")
@@ -68,6 +67,7 @@ class TwitchClipsToYoutube:
             raise ValueError("Max vertical video duration must be less than 60")
 
         self.clips_folder_path = twitch_data.clips_folder_path
+        self._create_clips_folder(clips_folder=self.clips_folder_path)
 
         self.twitch_urls = twitch_data.channels_urls
         self.twitch_clips_period = twitch_data.clips_period
@@ -81,10 +81,10 @@ class TwitchClipsToYoutube:
             logger=self.logger,
         )
 
-    def _create_clips_folder(self, cookies_folder: Path) -> None:
-        if not cookies_folder.exists():
+    def _create_clips_folder(self, clips_folder: Path) -> None:
+        if not clips_folder.exists():
             self.logger.log("Clips folder doesn't exist. Creating new one...")
-            cookies_folder.mkdir(parents=True, exist_ok=True)
+            clips_folder.mkdir(parents=True, exist_ok=True)
 
     def _get_cookies_uploader(self) -> Tuple[YoutubeUploaderViaCookies | None, bool]:
         try:
