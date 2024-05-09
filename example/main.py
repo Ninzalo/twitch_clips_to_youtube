@@ -17,7 +17,7 @@ DEBUG_MODE = True
 
 COOKIES_VALIDATION_RETRIES = 5
 
-COOKIES_FOLDER_PATH = Path(f"{os.getcwd()}/cookies")
+COOKIES_FOLDER_PATH = Path(f"{os.getcwd()}/cookies/")
 
 CLIPS_FOLDER_PATH = Path(f"{os.getcwd()}/clips/")
 
@@ -29,7 +29,7 @@ CUSTOM_TAGS = []
 
 CUSTOM_DESCRIPTION = ""
 
-CONFIGS_FOLDER_PATH = Path(f"{os.getcwd()}/configs")
+CONFIGS_FOLDER_PATH = Path(f"{os.getcwd()}/configs/")
 
 TWICH_URLS_PATH = Path(f"{CONFIGS_FOLDER_PATH}/twitch_urls.json")
 

@@ -37,8 +37,6 @@ class TwitchClipsToYoutube:
     ) -> None:
         self.logger = logger or Logger()
 
-        self._create_clips_folder()
-
         parser = argparse.ArgumentParser()
         parser.add_argument(
             "--cookies",
@@ -53,6 +51,7 @@ class TwitchClipsToYoutube:
         assert self.max_videos > 0, "Max videos must be at least 1"
 
         self.cookies_folder_path = cookies_settings.cookies_folder_path
+        self._create_clips_folder(self.cookies_folder_path)
         self.retries = cookies_settings.cookies_validation_retries
         self.json_cookies_path = Path(f"{self.cookies_folder_path}/cookies.json")
         self.cookies_path = Path(f"{self.cookies_folder_path}/cookies.txt")
@@ -82,8 +81,7 @@ class TwitchClipsToYoutube:
             logger=self.logger,
         )
 
-    def _create_clips_folder(self) -> None:
-        cookies_folder = self.cookies_folder_path
+    def _create_clips_folder(self, cookies_folder: Path) -> None:
         if not cookies_folder.exists():
             self.logger.log("Clips folder doesn't exist. Creating new one...")
             cookies_folder.mkdir(parents=True, exist_ok=True)
