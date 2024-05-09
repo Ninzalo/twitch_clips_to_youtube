@@ -54,7 +54,7 @@ class YoutubeUploaderViaCookies(BaseUploader):
                     f"Attempt: {retry + 1}/{self.retries}"
                 )
                 is_valid = False
-                time.sleep(randint(100, 200))
+                time.sleep(randint(0, 2))
                 continue
             is_valid = True
             break
