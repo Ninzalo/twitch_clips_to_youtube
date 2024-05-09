@@ -201,13 +201,15 @@ class TwitchClipsDownloader:
             key=lambda clip: clip.viewCount,
             reverse=is_reverse,
         )
-        self.logger.log("Sorting clips by views is done!")
+        self.logger.log(
+            f"Sorting clips by views is done! (Total: {len(sorted_clips_info)})"
+        )
         return sorted_clips_info
 
     def download_clip(
         self, clip_info: ClipInfo, clip_format: str | None = None
     ) -> Path:
-        self.logger.log(f"Downloading clip {clip_info.title} by {clip_info.slug}...")
+        self.logger.log(f"Downloading clip '{clip_info.title}' by {clip_info.slug}...")
         if not clip_format:
             clip_format = "mp4"
         file_path = Path(f"{self.clips_folder_path}/{clip_info.id}.{clip_format}")
