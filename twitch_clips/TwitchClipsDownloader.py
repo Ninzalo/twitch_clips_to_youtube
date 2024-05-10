@@ -191,6 +191,17 @@ class TwitchClipsDownloader:
         )
         return filtered_clips_info, new_used_titles
 
+    def filter_out_long_titles(self, clips_info: List[ClipInfo]) -> List[ClipInfo]:
+        self.logger.log("Filtering out clips with too long titles...")
+        filtered_clips = [
+            clip_info for clip_info in clips_info if len(clip_info.title) <= 50
+        ]
+        reduced_by = len(clips_info) - len(filtered_clips)
+        self.logger.log(
+            f"Filtering out clips with too long titles is done! ({reduced_by} clips removed)"
+        )
+        return filtered_clips
+
     def sort_by_views(
         self, clips_info: List[ClipInfo], reverse: bool | None = None
     ) -> List[ClipInfo]:

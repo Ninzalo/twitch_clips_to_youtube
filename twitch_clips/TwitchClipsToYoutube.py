@@ -164,6 +164,9 @@ class TwitchClipsToYoutube:
         filtered_clips_info, _ = self.twitch_downloader.filter_clips_by_used_titles(
             clips_info=filtered_clips_info, used_titles=self.used_titles
         )
+        filtered_clips_info = self.twitch_downloader.filter_out_long_titles(
+            clips_info=filtered_clips_info
+        )
         return filtered_clips_info
 
     def _download_clip(self, clip_info: ClipInfo) -> Path:
