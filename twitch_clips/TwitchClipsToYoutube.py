@@ -61,10 +61,10 @@ class TwitchClipsToYoutube:
 
         self.vertical_video_range = VerticalVideoRange(
             min_duration=3,
-            max_duration=60,
+            max_duration=58,
         )
-        if self.vertical_video_range.max_duration > 60:
-            raise ValueError("Max vertical video duration must be less than 60")
+        if self.vertical_video_range.max_duration > 58:
+            raise ValueError("Max vertical video duration must be less than 58")
 
         self.clips_folder_path = twitch_data.clips_folder_path
         self._create_clips_folder(clips_folder=self.clips_folder_path)
