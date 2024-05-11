@@ -22,7 +22,11 @@ class VerticalVideoConverter:
                 size=size,
                 color=color,
                 duration=duration,
-            ).write_videofile(str(output_file_path), fps=framerate)
+            ).write_videofile(
+                str(output_file_path),
+                fps=framerate,
+                logger=None,
+            )
             return Path(output_file_path)
         except Exception as e:
             raise RuntimeError("Error creating background file") from e
@@ -40,7 +44,11 @@ class VerticalVideoConverter:
             centered_resized_clip = resized_clip.with_position(("center", "center"))
             background = VideoFileClip(str(background_path))
             video = CompositeVideoClip([background, centered_resized_clip])
-            video.write_videofile(str(output_path), audio_codec="aac")
+            video.write_videofile(
+                str(output_path),
+                audio_codec="aac",
+                logger=None,
+            )
             return output_path
         except Exception as e:
             raise RuntimeError("Failed to create vertical video") from e
