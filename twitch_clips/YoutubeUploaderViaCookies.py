@@ -100,7 +100,7 @@ class YoutubeUploaderViaCookies(BaseUploader):
                 self.logger.log(f"Video uploaded: {video_info.title}")
                 return
             except Exception as e:
-                if attempt < self.retries - 1:
+                if attempt < self.retries - 1 and "Daily limit" not in str(e):
                     self.logger.log(
                         f"Error uploading video: {video_info.title}. "
                         f"Retrying... ({e})"
