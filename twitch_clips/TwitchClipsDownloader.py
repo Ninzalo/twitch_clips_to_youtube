@@ -191,14 +191,18 @@ class TwitchClipsDownloader:
         )
         return filtered_clips_info, new_used_titles
 
-    def filter_out_long_titles(self, clips_info: List[ClipInfo]) -> List[ClipInfo]:
+    def filter_out_long_titles(
+        self,
+        clips_info: List[ClipInfo],
+    ) -> List[ClipInfo]:
         self.logger.log("Filtering out clips with too long titles...")
         filtered_clips = [
             clip_info for clip_info in clips_info if len(clip_info.title) <= 50
         ]
         reduced_by = len(clips_info) - len(filtered_clips)
         self.logger.log(
-            f"Filtering out clips with too long titles is done! ({reduced_by} clips removed)"
+            "Filtering out clips with too long titles is done! "
+            f"({reduced_by} clips removed)"
         )
         return filtered_clips
 
@@ -220,7 +224,10 @@ class TwitchClipsDownloader:
     def download_clip(
         self, clip_info: ClipInfo, clip_format: str | None = None
     ) -> Path:
-        self.logger.log(f"Downloading clip '{clip_info.title}' by {clip_info.slug}...")
+        self.logger.log(
+            f'Downloading clip "{clip_info.title}" from: https://www.twitch.tv'
+            f"/{clip_info.broadcaster}/clip/{clip_info.slug} ..."
+        )
         if not clip_format:
             clip_format = "mp4"
         file_path = Path(f"{self.clips_folder_path}/{clip_info.id}.{clip_format}")
@@ -235,7 +242,7 @@ class TwitchClipsDownloader:
             file_path,
         ]
         subprocess.check_output(command)
-        self.logger.log(f"Downloaded clip {clip_info.slug}")
+        self.logger.log(f"Downloaded clip: {clip_info.title}")
         return Path(file_path)
 
     def download_multiple_clips(
