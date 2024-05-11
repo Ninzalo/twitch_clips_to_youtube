@@ -90,12 +90,23 @@ class YoutubeUploaderViaCookies(BaseUploader):
             allow_comments_mode=AllowCommentsEnum.HOLD_INAPPROPRIATE,
             tags=tags,
         )
-        try:
-            self.uploader.upload(
-                file_path=str(video_info.video_path), metadata=video_metadata
-            )
-            self.logger.log(f"Video uploaded: {video_info.title}")
-        except Exception as e:
-            raise RuntimeError(
-                f"Error uploading video: {video_info.title} ({e})"
-            ) from e
+
+        for attempt in range(self.retries):
+            try:
+                self.uploader.upload(
+                    file_path=str(video_info.video_path),
+                    metadata=video_metadata,
+                )
+                self.logger.log(f"Video uploaded: {video_info.title}")
+                return
+            except Exception as e:
+                if attempt < self.retries - 1:
+                    self.logger.log(
+                        f"Error uploading video: {video_info.title}. "
+                        f"Retrying... ({e})"
+                    )
+                    time.sleep(randint(3, 10))
+                    continue
+                raise RuntimeError(
+                    f"Error uploading video: {video_info.title} ({e})"
+                ) from e
