@@ -26,3 +26,7 @@ class BaseUploader(ABC):
         video_info: VideoInfo,
     ) -> None:
         """Upload video to YouTube."""
+
+    @abstractmethod
+    def close_session(self) -> None:
+        """Close session with YouTube."""

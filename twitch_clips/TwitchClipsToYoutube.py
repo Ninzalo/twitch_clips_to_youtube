@@ -219,7 +219,6 @@ class TwitchClipsToYoutube:
     def _publish_clip(
         self,
         clip_info: ClipInfo,
-        yt_uploader: BaseUploader,
         is_vertical: bool | None = None,
     ) -> None:
         try:
@@ -232,7 +231,7 @@ class TwitchClipsToYoutube:
                     clip_path = self._convert_clip_to_vertical(clip_path, clip_info)
                 except RuntimeError as e:
                     self.logger.log(f"{e}")
-            yt_uploader.upload(
+            self.yt_uploader.upload(
                 VideoInfo(
                     video_path=clip_path,
                     title=title_with_author,
@@ -272,9 +271,11 @@ class TwitchClipsToYoutube:
             try:
                 self._publish_clip(
                     clip_info=clip_info,
-                    yt_uploader=self.yt_uploader,
                     is_vertical=is_vertical,
                 )
             except RuntimeError:
                 break
         self.twitch_downloader.delete_all_clips()
+
+    def close_session(self) -> None:
+        self.yt_uploader.close_session()

@@ -80,6 +80,7 @@ if __name__ == "__main__":
         logger=logger,
     )
     uploader.run()
+    uploader.close_session()
 
     with open(USED_TITLES_PATH, "w", encoding="utf-8") as file:
         json.dump(uploader.used_titles, file, ensure_ascii=False, indent=4)

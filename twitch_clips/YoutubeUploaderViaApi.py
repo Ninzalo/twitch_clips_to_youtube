@@ -120,3 +120,6 @@ class YoutubeUploaderViaApi(BaseUploader):
             ) from e
         except Exception as e:
             raise RuntimeError(f"Error uploading video: {video_info.title}") from e
+
+    def close_session(self) -> None:
+        pass

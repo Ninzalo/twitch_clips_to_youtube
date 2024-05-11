@@ -110,3 +110,6 @@ class YoutubeUploaderViaCookies(BaseUploader):
                 raise RuntimeError(
                     f"Error uploading video: {video_info.title} ({e})"
                 ) from e
+
+    def close_session(self) -> None:
+        self.uploader._session.close()
