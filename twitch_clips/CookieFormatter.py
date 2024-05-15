@@ -139,7 +139,7 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         formats = ["%Y-%m-%dT%H:%M:%S.%fZ", "%d.%m.%Y, %H:%M:%S"]
         for format_ in formats:
             try:
-                return datetime.datetime.strptime(expiration, format_).timestamp()
+                return int(datetime.datetime.strptime(expiration, format_).timestamp())
             except Exception:
                 continue
         raise ValueError("Failed to convert expiration date")
@@ -163,7 +163,7 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
                 if domain[0] != ".":
                     domain = "." + domain
                 http_only = "TRUE" if http_only == "✓" else "FALSE"
-                if expiration == "Session" or expiration == "Сеанс":
+                if expiration in ("Session", "Сеанс"):
                     expiration = int(
                         (
                             datetime.datetime.now() + datetime.timedelta(days=1)
