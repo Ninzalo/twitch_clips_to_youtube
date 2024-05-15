@@ -135,7 +135,17 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         return cookies
 
     @staticmethod
-    def _format_stdin_to_netscape(cookies: List[str]) -> str:
+    def _convert_expiration(expiration: str):
+        formats = ["%Y-%m-%dT%H:%M:%S.%fZ", "%d.%m.%Y, %H:%M:%S"]
+        for format_ in formats:
+            try:
+                return datetime.datetime.strptime(expiration, format_).timestamp()
+            except Exception:
+                continue
+        raise ValueError("Failed to convert expiration date")
+
+    @classmethod
+    def _format_stdin_to_netscape(cls, cookies: List[str]) -> str:
         try:
             formatted_cookies = []
             for cookie in cookies:
@@ -153,18 +163,18 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
                 if domain[0] != ".":
                     domain = "." + domain
                 http_only = "TRUE" if http_only == "✓" else "FALSE"
-                if expiration == "Session":
+                if expiration == "Session" or expiration == "Сеанс":
                     expiration = int(
                         (
                             datetime.datetime.now() + datetime.timedelta(days=1)
                         ).timestamp()
                     )
                 else:
-                    expiration = int(
-                        datetime.datetime.strptime(
-                            expiration, "%Y-%m-%dT%H:%M:%S.%fZ"
-                        ).timestamp()
-                    )
+                    try:
+                        expiration = cls._convert_expiration(expiration=expiration)
+                    except Exception:
+                        continue
+
                 formatted_cookie_str = "\t".join(
                     [domain, "TRUE", path, http_only, str(expiration), name, value]
                 )
