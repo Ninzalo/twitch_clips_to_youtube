@@ -1,4 +1,10 @@
-from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader, VideoInfo
+from .BaseYoutubeUploader import (
+    BaseLanguageEnum,
+    BaseLicenseEnum,
+    BasePrivacyEnum,
+    BaseUploader,
+    VideoInfo,
+)
 from .CookieFormatter import (
     BaseCookieFormatter,
     JSONNetScapeFormatter,

@@ -3,9 +3,22 @@ from dataclasses import dataclass
 from pathlib import Path
 from random import randint
 
-from youtube_up import AllowCommentsEnum, Metadata, PrivacyEnum, YTUploaderSession
+from youtube_up import (
+    AllowCommentsEnum,
+    LanguageEnum,
+    LicenseEnum,
+    Metadata,
+    PrivacyEnum,
+    YTUploaderSession,
+)
 
-from .BaseYoutubeUploader import BasePrivacyEnum, BaseUploader, VideoInfo
+from .BaseYoutubeUploader import (
+    BaseLanguageEnum,
+    BaseLicenseEnum,
+    BasePrivacyEnum,
+    BaseUploader,
+    VideoInfo,
+)
 from .Logger import BaseLogger, Logger
 
 
@@ -81,14 +94,43 @@ class YoutubeUploaderViaCookies(BaseUploader):
             if video_info.privacy == BasePrivacyEnum.PUBLIC:
                 privacy_status = PrivacyEnum.PUBLIC
 
+        language = LanguageEnum.RUSSIAN
+        if video_info.language is None:
+            language = LanguageEnum.RUSSIAN
+        if video_info.language is not None:
+            if video_info.language == BaseLanguageEnum.NOT_APPLICABLE:
+                language = LanguageEnum.NOT_APPLICABLE
+            if video_info.language == BaseLanguageEnum.RUSSIAN:
+                language = LanguageEnum.RUSSIAN
+            if video_info.language == BaseLanguageEnum.ENGLISH:
+                language = LanguageEnum.ENGLISH
+            if video_info.language == BaseLanguageEnum.ENGLISH_INDIA:
+                language = LanguageEnum.ENGLISH_INDIA
+            if video_info.language == BaseLanguageEnum.ENGLISH_UNITED_KINGDOM:
+                language = LanguageEnum.ENGLISH_UNITED_KINGDOM
+            if video_info.language == BaseLanguageEnum.ENGLISH_UNITED_STATES:
+                language = LanguageEnum.ENGLISH_UNITED_STATES
+
+        license_ = LicenseEnum.STANDARD
+        if video_info.license is None:
+            license_ = LicenseEnum.STANDARD
+        if video_info.license is not None:
+            if video_info.license == BaseLicenseEnum.STANDARD:
+                license_ = LicenseEnum.STANDARD
+            if video_info.license == BaseLicenseEnum.CREATIVE_COMMONS:
+                license_ = LicenseEnum.CREATIVE_COMMONS
+
         self.logger.log(f"Uploading video: {video_info.title}")
         video_metadata = Metadata(
             title=video_info.title,
             description=description,
-            privacy=privacy_status,
-            made_for_kids=False,
-            allow_comments_mode=AllowCommentsEnum.HOLD_INAPPROPRIATE,
             tags=tags,
+            allow_comments_mode=AllowCommentsEnum.HOLD_INAPPROPRIATE,
+            can_view_ratings=True,
+            privacy=privacy_status,
+            audio_language=language,
+            license=license_,
+            made_for_kids=video_info.made_for_kids or False,
         )
 
         for attempt in range(self.retries):

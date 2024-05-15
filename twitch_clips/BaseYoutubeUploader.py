@@ -10,13 +10,30 @@ class BasePrivacyEnum(str, Enum):
     PUBLIC = "public"
 
 
+class BaseLanguageEnum(str, Enum):
+    NOT_APPLICABLE = "zxx"
+    RUSSIAN = "ru"
+    ENGLISH = "en"
+    ENGLISH_INDIA = "en-IN"
+    ENGLISH_UNITED_KINGDOM = "en-GB"
+    ENGLISH_UNITED_STATES = "en-US"
+
+
+class BaseLicenseEnum(str, Enum):
+    STANDARD = "standard"
+    CREATIVE_COMMONS = "creative_commons"
+
+
 @dataclass
 class VideoInfo:
     video_path: Path
     title: str
     description: str | None = None
     tags: List[str] | None = None
+    made_for_kids: bool | None = None
     privacy: BasePrivacyEnum | None = None
+    language: BaseLanguageEnum | None = None
+    license: BaseLicenseEnum | None = None
 
 
 class BaseUploader(ABC):

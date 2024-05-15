@@ -3,7 +3,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Tuple
 
-from .BaseYoutubeUploader import BaseUploader, VideoInfo
+from .BaseYoutubeUploader import (
+    BaseLanguageEnum,
+    BaseLicenseEnum,
+    BasePrivacyEnum,
+    BaseUploader,
+    VideoInfo,
+)
 from .CookieFormatter import JSONNetScapeFormatter, StdinNetScapeFormatter
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import ClipInfo, TwitchClipsDownloader, TwitchData
@@ -18,6 +24,10 @@ from .YoutubeUploaderViaCookies import (
 class CustomVideoMetadata:
     custom_description: str | None = None
     custom_tags: List[str] | None = None
+    license: BaseLicenseEnum | None = None
+    language: BaseLanguageEnum | None = None
+    privacy: BasePrivacyEnum | None = None
+    made_for_kids: bool | None = None
 
 
 @dataclass
@@ -237,7 +247,20 @@ class TwitchClipsToYoutube:
                     title=title_with_author,
                     description=description,
                     tags=tags,
-                    privacy=None,
+                    made_for_kids=(
+                        self.custom_metadata.made_for_kids
+                        if self.custom_metadata
+                        else None
+                    ),
+                    privacy=(
+                        self.custom_metadata.privacy if self.custom_metadata else None
+                    ),
+                    language=(
+                        self.custom_metadata.language if self.custom_metadata else None
+                    ),
+                    license=(
+                        self.custom_metadata.license if self.custom_metadata else None
+                    ),
                 )
             )
             self.used_titles.append(clip_info.title)

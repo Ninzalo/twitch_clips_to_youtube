@@ -3,6 +3,9 @@ import os
 from pathlib import Path
 
 from twitch_clips import (
+    BaseLanguageEnum,
+    BaseLicenseEnum,
+    BasePrivacyEnum,
     CookiesUploaderSettings,
     CustomVideoMetadata,
     Logger,
@@ -28,6 +31,14 @@ TWITCH_CLIPS_PERIOD = PeriodEnum.LAST_DAY
 CUSTOM_TAGS = []
 
 CUSTOM_DESCRIPTION = ""
+
+CUSTOM_LICENSE = BaseLicenseEnum.STANDARD
+
+CUSTOM_LANGUAGE = BaseLanguageEnum.RUSSIAN
+
+CUSTOM_PRIVACY = BasePrivacyEnum.PUBLIC
+
+IS_MADE_FOR_KIDS = False
 
 CONFIGS_FOLDER_PATH = Path(f"{os.getcwd()}/configs/")
 
@@ -58,6 +69,10 @@ with open(UNSUPPORTED_WORDS_PATH, "r", encoding="utf-8") as file:
 custom_metadata = CustomVideoMetadata(
     custom_description=CUSTOM_DESCRIPTION,
     custom_tags=CUSTOM_TAGS,
+    license=CUSTOM_LICENSE,
+    language=CUSTOM_LANGUAGE,
+    privacy=CUSTOM_PRIVACY,
+    made_for_kids=IS_MADE_FOR_KIDS,
 )
 logger = Logger(debug_mode=DEBUG_MODE)
 
