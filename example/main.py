@@ -40,6 +40,12 @@ CUSTOM_PRIVACY = BasePrivacyEnum.PUBLIC
 
 IS_MADE_FOR_KIDS = False
 
+STREAMER_URL_IN_DESC = True
+
+STREAMER_TAG_IN_TITLE = True
+
+SHORTS_TAG_IN_TITLE = True
+
 CONFIGS_FOLDER_PATH = Path(f"{os.getcwd()}/configs/")
 
 TWICH_URLS_PATH = Path(f"{CONFIGS_FOLDER_PATH}/twitch_urls.json")
@@ -73,6 +79,9 @@ custom_metadata = CustomVideoMetadata(
     language=CUSTOM_LANGUAGE,
     privacy=CUSTOM_PRIVACY,
     made_for_kids=IS_MADE_FOR_KIDS,
+    streamer_url_in_desc=STREAMER_URL_IN_DESC,
+    streamer_tag_in_title=STREAMER_TAG_IN_TITLE,
+    shorts_tag_in_title=SHORTS_TAG_IN_TITLE,
 )
 logger = Logger(debug_mode=DEBUG_MODE)
 

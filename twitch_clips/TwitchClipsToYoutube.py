@@ -29,8 +29,8 @@ class CustomVideoMetadata:
     privacy: BasePrivacyEnum | None = None
     made_for_kids: bool | None = None
     streamer_url_in_desc: bool | None = None
-    shorts_tag_in_title: bool | None = None
     streamer_tag_in_title: bool | None = None
+    shorts_tag_in_title: bool | None = None
 
 
 @dataclass
