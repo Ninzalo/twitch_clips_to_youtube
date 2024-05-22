@@ -177,9 +177,6 @@ class TwitchClipsToYoutube:
         filtered_clips_info, _ = self.twitch_downloader.filter_clips_by_used_titles(
             clips_info=filtered_clips_info, used_titles=self.used_titles
         )
-        filtered_clips_info = self.twitch_downloader.filter_out_long_titles(
-            clips_info=filtered_clips_info
-        )
         return filtered_clips_info
 
     def _download_clip(self, clip_info: ClipInfo) -> Path:
@@ -213,7 +210,11 @@ class TwitchClipsToYoutube:
                 self.custom_metadata.custom_tags, list
             ):
                 tags.extend(self.custom_metadata.custom_tags)
-        return title.strip(), description.strip(), tags
+        title = title.strip()
+        description = description.strip()
+        if len(title) > 99:
+            raise RuntimeError("Title length is more than 99 characters")
+        return title, description, tags
 
     def _convert_clip_to_vertical(self, clip_path: Path, clip_info: ClipInfo) -> Path:
         try:
@@ -245,21 +246,27 @@ class TwitchClipsToYoutube:
         self,
         clip_info: ClipInfo,
         is_vertical: bool | None = None,
-    ) -> None:
+    ) -> bool:
         try:
             clip_path = self._download_clip(clip_info)
-            title_with_author, description, tags = self._generate_video_metadata(
-                clip_info, is_vertical
-            )
+            try:
+                title, description, tags = self._generate_video_metadata(
+                    clip_info, is_vertical
+                )
+            except RuntimeError as e:
+                self.logger.log(f"{e}")
+                self.used_titles.append(clip_info.title)
+                return False
             if is_vertical:
                 try:
                     clip_path = self._convert_clip_to_vertical(clip_path, clip_info)
                 except RuntimeError as e:
                     self.logger.log(f"{e}")
+                    title = title.replace(" #shorts", "")
             self.yt_uploader.upload(
                 VideoInfo(
                     video_path=clip_path,
-                    title=title_with_author,
+                    title=title,
                     description=description,
                     tags=tags,
                     made_for_kids=(
@@ -284,6 +291,7 @@ class TwitchClipsToYoutube:
             )
             if not deletion_status:
                 self.logger.log(log_info)
+            return True
         except RuntimeError as e:
             self.logger.log("An error occurred while publishing the clip.")
             self.logger.log(f"Error details: {e}")
@@ -300,18 +308,23 @@ class TwitchClipsToYoutube:
         sorted_clips_info_by_views = self.twitch_downloader.sort_by_views(
             clips_info=filtered_clips
         )
-        for clip_info in sorted_clips_info_by_views[: self.max_videos]:
+        posted_videos = 0
+        for clip_info in sorted_clips_info_by_views:
             is_vertical = (
                 self.vertical_video_range.min_duration
                 <= clip_info.durationSeconds
                 < self.vertical_video_range.max_duration
             )
             try:
-                self._publish_clip(
+                success = self._publish_clip(
                     clip_info=clip_info,
                     is_vertical=is_vertical,
                 )
+                if success:
+                    posted_videos += 1
             except RuntimeError:
+                break
+            if posted_videos >= self.max_videos:
                 break
         self.twitch_downloader.delete_all_clips()
 
