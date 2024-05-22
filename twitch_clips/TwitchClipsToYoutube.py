@@ -28,6 +28,9 @@ class CustomVideoMetadata:
     language: BaseLanguageEnum | None = None
     privacy: BasePrivacyEnum | None = None
     made_for_kids: bool | None = None
+    streamer_url_in_desc: bool | None = None
+    shorts_tag_in_title: bool | None = None
+    streamer_tag_in_title: bool | None = None
 
 
 @dataclass
@@ -188,17 +191,29 @@ class TwitchClipsToYoutube:
     def _generate_video_metadata(
         self, clip_info: ClipInfo, is_vertical: bool | None = None
     ) -> Tuple[str, str, List[str]]:
-        title_with_author = f"{clip_info.title} #{clip_info.broadcaster}"
-        if is_vertical:
-            title_with_author += r" #shorts"
-        description = f"Streamer: https://www.twitch.tv/{clip_info.broadcaster}"
+        title = f"{clip_info.title}"
+        description = ""
         tags = [f"{clip_info.broadcaster}"]
         if self.custom_metadata is not None:
-            if self.custom_metadata.custom_description is not None:
-                description += f"\n\n{self.custom_metadata.custom_description}"
-            if self.custom_metadata.custom_tags is not None:
+            if self.custom_metadata.streamer_tag_in_title:
+                title += f" #{clip_info.broadcaster}"
+            if self.custom_metadata.shorts_tag_in_title and is_vertical:
+                title += r" #shorts"
+            if self.custom_metadata.streamer_url_in_desc:
+                description += (
+                    f"Streamer: https://www.twitch.tv/{clip_info.broadcaster}"
+                )
+            if self.custom_metadata.custom_description is not None and isinstance(
+                self.custom_metadata.custom_description, str
+            ):
+                if description != "":
+                    description += "\n\n"
+                description += f"{self.custom_metadata.custom_description}"
+            if self.custom_metadata.custom_tags is not None and isinstance(
+                self.custom_metadata.custom_tags, list
+            ):
                 tags.extend(self.custom_metadata.custom_tags)
-        return title_with_author, description, tags
+        return title.strip(), description.strip(), tags
 
     def _convert_clip_to_vertical(self, clip_path: Path, clip_info: ClipInfo) -> Path:
         try:
