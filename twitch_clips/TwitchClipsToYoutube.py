@@ -21,16 +21,21 @@ from .YoutubeUploaderViaCookies import (
 
 
 @dataclass
-class CustomVideoMetadata:
-    custom_description: str | None = None
-    custom_tags: List[str] | None = None
-    license: BaseLicenseEnum | None = None
+class VideoProperties:
+    license_: BaseLicenseEnum | None = None
     language: BaseLanguageEnum | None = None
     privacy: BasePrivacyEnum | None = None
     made_for_kids: bool | None = None
+
+
+@dataclass
+class CustomVideoMetadata:
+    custom_description: str | None = None
+    custom_tags: List[str] | None = None
     streamer_url_in_desc: bool | None = None
     streamer_tag_in_title: bool | None = None
     shorts_tag_in_title: bool | None = None
+    video_properties: VideoProperties | None = None
 
 
 @dataclass
@@ -216,7 +221,11 @@ class TwitchClipsToYoutube:
             raise RuntimeError("Title length is more than 99 characters")
         return title, description, tags
 
-    def _convert_clip_to_vertical(self, clip_path: Path, clip_info: ClipInfo) -> Path:
+    def _convert_clip_to_vertical(
+        self,
+        clip_path: Path,
+        clip_info: ClipInfo,
+    ) -> Path:
         try:
             background_file_path = VerticalVideoConverter.create_background_file(
                 output_file_path=Path(
@@ -259,7 +268,10 @@ class TwitchClipsToYoutube:
                 return False
             if is_vertical:
                 try:
-                    clip_path = self._convert_clip_to_vertical(clip_path, clip_info)
+                    clip_path = self._convert_clip_to_vertical(
+                        clip_path,
+                        clip_info,
+                    )
                 except RuntimeError as e:
                     self.logger.log(f"{e}")
                     title = title.replace(" #shorts", "")
@@ -270,18 +282,28 @@ class TwitchClipsToYoutube:
                     description=description,
                     tags=tags,
                     made_for_kids=(
-                        self.custom_metadata.made_for_kids
+                        self.custom_metadata.video_properties.made_for_kids
                         if self.custom_metadata
+                        and self.custom_metadata.video_properties
                         else None
                     ),
                     privacy=(
-                        self.custom_metadata.privacy if self.custom_metadata else None
+                        self.custom_metadata.video_properties.privacy
+                        if self.custom_metadata
+                        and self.custom_metadata.video_properties
+                        else None
                     ),
                     language=(
-                        self.custom_metadata.language if self.custom_metadata else None
+                        self.custom_metadata.video_properties.language
+                        if self.custom_metadata
+                        and self.custom_metadata.video_properties
+                        else None
                     ),
                     license=(
-                        self.custom_metadata.license if self.custom_metadata else None
+                        self.custom_metadata.video_properties.license_
+                        if self.custom_metadata
+                        and self.custom_metadata.video_properties
+                        else None
                     ),
                 )
             )

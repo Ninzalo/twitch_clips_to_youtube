@@ -12,6 +12,7 @@ from twitch_clips import (
     PeriodEnum,
     TwitchClipsToYoutube,
     TwitchData,
+    VideoProperties,
 )
 
 MAX_VIDEOS = 1
@@ -55,37 +56,39 @@ USED_TITLES_PATH = Path(f"{CONFIGS_FOLDER_PATH}/used_titles.json")
 UNSUPPORTED_WORDS_PATH = Path(f"{CONFIGS_FOLDER_PATH}/unsupported_words.json")
 
 
-if not CONFIGS_FOLDER_PATH.exists():
-    Path(CONFIGS_FOLDER_PATH).mkdir(parents=True, exist_ok=True)
-if not TWICH_URLS_PATH.exists():
-    with open(TWICH_URLS_PATH, "w", encoding="utf-8") as twitch_urls_file:
-        json.dump([], twitch_urls_file, ensure_ascii=False, indent=4)
-with open(TWICH_URLS_PATH, "r", encoding="utf-8") as twitch_urls_file:
-    TWICH_URLS = json.load(twitch_urls_file)
-if not USED_TITLES_PATH.exists():
-    with open(USED_TITLES_PATH, "w", encoding="utf-8") as used_titles_file:
-        json.dump([], used_titles_file, ensure_ascii=False, indent=4)
-with open(USED_TITLES_PATH, "r", encoding="utf-8") as file:
-    USED_TITLES = json.load(file)
-if not UNSUPPORTED_WORDS_PATH.exists():
-    with open(UNSUPPORTED_WORDS_PATH, "w", encoding="utf-8") as u_w_file:
-        json.dump([], u_w_file, ensure_ascii=False, indent=4)
-with open(UNSUPPORTED_WORDS_PATH, "r", encoding="utf-8") as file:
-    UNSUPPORTED_WORDS = json.load(file)
-custom_metadata = CustomVideoMetadata(
-    custom_description=CUSTOM_DESCRIPTION,
-    custom_tags=CUSTOM_TAGS,
-    license=CUSTOM_LICENSE,
-    language=CUSTOM_LANGUAGE,
-    privacy=CUSTOM_PRIVACY,
-    made_for_kids=IS_MADE_FOR_KIDS,
-    streamer_url_in_desc=STREAMER_URL_IN_DESC,
-    streamer_tag_in_title=STREAMER_TAG_IN_TITLE,
-    shorts_tag_in_title=SHORTS_TAG_IN_TITLE,
-)
-logger = Logger(debug_mode=DEBUG_MODE)
-
 if __name__ == "__main__":
+    if not CONFIGS_FOLDER_PATH.exists():
+        Path(CONFIGS_FOLDER_PATH).mkdir(parents=True, exist_ok=True)
+    if not TWICH_URLS_PATH.exists():
+        with open(TWICH_URLS_PATH, "w", encoding="utf-8") as twitch_urls_file:
+            json.dump([], twitch_urls_file, ensure_ascii=False, indent=4)
+    with open(TWICH_URLS_PATH, "r", encoding="utf-8") as twitch_urls_file:
+        TWICH_URLS = json.load(twitch_urls_file)
+    if not USED_TITLES_PATH.exists():
+        with open(USED_TITLES_PATH, "w", encoding="utf-8") as used_titles_file:
+            json.dump([], used_titles_file, ensure_ascii=False, indent=4)
+    with open(USED_TITLES_PATH, "r", encoding="utf-8") as file:
+        USED_TITLES = json.load(file)
+    if not UNSUPPORTED_WORDS_PATH.exists():
+        with open(UNSUPPORTED_WORDS_PATH, "w", encoding="utf-8") as u_w_file:
+            json.dump([], u_w_file, ensure_ascii=False, indent=4)
+    with open(UNSUPPORTED_WORDS_PATH, "r", encoding="utf-8") as file:
+        UNSUPPORTED_WORDS = json.load(file)
+    custom_metadata = CustomVideoMetadata(
+        custom_description=CUSTOM_DESCRIPTION,
+        custom_tags=CUSTOM_TAGS,
+        streamer_url_in_desc=STREAMER_URL_IN_DESC,
+        streamer_tag_in_title=STREAMER_TAG_IN_TITLE,
+        shorts_tag_in_title=SHORTS_TAG_IN_TITLE,
+        video_properties=VideoProperties(
+            license_=CUSTOM_LICENSE,
+            language=CUSTOM_LANGUAGE,
+            privacy=CUSTOM_PRIVACY,
+            made_for_kids=IS_MADE_FOR_KIDS,
+        ),
+    )
+    logger = Logger(debug_mode=DEBUG_MODE)
+
     uploader = TwitchClipsToYoutube(
         max_videos_to_upload=MAX_VIDEOS,
         twitch_data=TwitchData(

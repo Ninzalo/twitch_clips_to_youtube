@@ -12,7 +12,11 @@ from .CookieFormatter import (
 )
 from .Logger import BaseLogger, Logger
 from .TwitchClipsDownloader import PeriodEnum, TwitchClipsDownloader, TwitchData
-from .TwitchClipsToYoutube import CustomVideoMetadata, TwitchClipsToYoutube
+from .TwitchClipsToYoutube import (
+    CustomVideoMetadata,
+    TwitchClipsToYoutube,
+    VideoProperties,
+)
 from .VerticalVideoConverter import VerticalVideoConverter
 from .YoutubeUploaderViaApi import ApiUploaderSettings, YoutubeUploaderViaApi
 from .YoutubeUploaderViaCookies import (

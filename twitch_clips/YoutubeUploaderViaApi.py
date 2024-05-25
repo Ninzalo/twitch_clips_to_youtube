@@ -1,7 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from pathlib import Path
-from typing import List
 
 import httplib2
 import pytz
