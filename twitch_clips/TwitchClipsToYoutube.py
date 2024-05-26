@@ -335,7 +335,7 @@ class TwitchClipsToYoutube:
                         and self.custom_metadata.video_properties
                         else None
                     ),
-                    license=(
+                    license_=(
                         self.custom_metadata.video_properties.license_
                         if self.custom_metadata
                         and self.custom_metadata.video_properties

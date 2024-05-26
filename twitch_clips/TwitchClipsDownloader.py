@@ -52,7 +52,7 @@ class TwitchClipsDownloader:
         self.twitch_urls = twitch_urls
 
     def get_clips(
-        self, clips_limit: int | None = None, period: PeriodEnum | None = None
+        self, clips_limit: int | None = None, period: PeriodEnum | None = None,
     ) -> list[dict]:
         self.logger.log("Getting clips...")
         all_clips_json = []
@@ -88,7 +88,7 @@ class TwitchClipsDownloader:
                 self.logger.log(
                     f"Failed to parse "
                     f"{'all' if clips_limit is None else clips_limit} "
-                    f"clips from {twitch_username}"
+                    f"clips from {twitch_username}",
                 )
                 self.logger.log(str(e))
         self.logger.log(f"Got {len(all_clips_json)} clips")
@@ -100,8 +100,8 @@ class TwitchClipsDownloader:
                 {
                     "frameRate": 30,
                     "quality": "360",
-                }
-            ]
+                },
+            ],
         }
         return ClipInfo(
             id=clip_dict["id"],
@@ -111,13 +111,13 @@ class TwitchClipsDownloader:
             durationSeconds=clip_dict["durationSeconds"],
             broadcaster=clip_dict["broadcaster"]["login"],
             quality=clip_dict.get(
-                "videoQualities", default_quality_dict.get("videoQualities")
+                "videoQualities", default_quality_dict.get("videoQualities"),
             )[0].get("quality"),
             framerate=int(
                 clip_dict.get(
                     "videoQualities",
                     default_quality_dict.get("videoQualities"),
-                )[0].get("frameRate")
+                )[0].get("frameRate"),
             ),
         )
 
@@ -132,7 +132,7 @@ class TwitchClipsDownloader:
         return clips_info
 
     def filter_clips_by_unsupported_words(
-        self, clips_info: list[ClipInfo], unsupported_words: list[str]
+        self, clips_info: list[ClipInfo], unsupported_words: list[str],
     ) -> list[ClipInfo]:
         self.logger.log("Filtering clips by unsupported words...")
 
@@ -143,12 +143,12 @@ class TwitchClipsDownloader:
             return True
 
         filtered_clips_info = list(
-            filter(filter_unsupported_words, clips_info)
+            filter(filter_unsupported_words, clips_info),
         )
         reduced_by = len(clips_info) - len(filtered_clips_info)
         self.logger.log(
             "Filtering clips by unsupported words is done! "
-            f"({reduced_by} clips removed)"
+            f"({reduced_by} clips removed)",
         )
         return filtered_clips_info
 
@@ -169,7 +169,7 @@ class TwitchClipsDownloader:
         return demojized_clips
 
     def filter_clips_by_used_titles(
-        self, clips_info: list[ClipInfo], used_titles: list[str]
+        self, clips_info: list[ClipInfo], used_titles: list[str],
     ) -> tuple[list[ClipInfo], list[str]]:
         self.logger.log("Filtering clips by used titles...")
         new_used_titles = []
@@ -189,27 +189,13 @@ class TwitchClipsDownloader:
         filtered_clips_info = list(filter(is_used_title, clips_info))
         reduced_by = len(clips_info) - len(filtered_clips_info)
         self.logger.log(
-            f"Filtering clips by used titles is done! ({reduced_by} clips removed)"
+            "Filtering clips by used titles is done! "
+            f"({reduced_by} clips removed)",
         )
         return filtered_clips_info, new_used_titles
 
-    def filter_out_long_titles(
-        self,
-        clips_info: list[ClipInfo],
-    ) -> list[ClipInfo]:
-        self.logger.log("Filtering out clips with too long titles...")
-        filtered_clips = [
-            clip_info for clip_info in clips_info if len(clip_info.title) <= 50
-        ]
-        reduced_by = len(clips_info) - len(filtered_clips)
-        self.logger.log(
-            "Filtering out clips with too long titles is done! "
-            f"({reduced_by} clips removed)"
-        )
-        return filtered_clips
-
     def sort_by_views(
-        self, clips_info: list[ClipInfo], reverse: bool | None = None
+        self, clips_info: list[ClipInfo], reverse: bool | None = None,
     ) -> list[ClipInfo]:
         self.logger.log("Sorting clips by views...")
         is_reverse = True if reverse is None else not bool(reverse)
@@ -219,21 +205,22 @@ class TwitchClipsDownloader:
             reverse=is_reverse,
         )
         self.logger.log(
-            f"Sorting clips by views is done! (Total: {len(sorted_clips_info)})"
+            "Sorting clips by views is done! "
+            f"(Total: {len(sorted_clips_info)})",
         )
         return sorted_clips_info
 
     def download_clip(
-        self, clip_info: ClipInfo, clip_format: str | None = None
+        self, clip_info: ClipInfo, clip_format: str | None = None,
     ) -> Path:
         self.logger.log(
             f'Downloading clip "{clip_info.title}" from: https://www.twitch.tv'
-            f"/{clip_info.broadcaster}/clip/{clip_info.slug} ..."
+            f"/{clip_info.broadcaster}/clip/{clip_info.slug} ...",
         )
         if not clip_format:
             clip_format = "mp4"
         file_path = Path(
-            f"{self.clips_folder_path}/{clip_info.id}.{clip_format}"
+            f"{self.clips_folder_path}/{clip_info.id}.{clip_format}",
         )
         command = [
             "twitch-dl",
@@ -250,7 +237,7 @@ class TwitchClipsDownloader:
         return Path(file_path)
 
     def download_multiple_clips(
-        self, clips_info: list[ClipInfo], clips_format: str | None = None
+        self, clips_info: list[ClipInfo], clips_format: str | None = None,
     ) -> list[Path]:
         self.logger.log("Downloading multiple clips...")
         if not clips_format:
@@ -269,7 +256,7 @@ class TwitchClipsDownloader:
     def delete_clip_by_path(self, path: Path) -> tuple[bool, str]:
         self.logger.log(f"Deleting clip {path}...")
         if path.exists():
-            os.remove(path)
+            Path.unlink(path)
             log_info = f"Clip deleted: {path}"
             self.logger.log(log_info)
             return True, log_info

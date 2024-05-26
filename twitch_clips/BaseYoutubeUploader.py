@@ -33,7 +33,7 @@ class VideoInfo:
     made_for_kids: bool | None = None
     privacy: BasePrivacyEnum | None = None
     language: BaseLanguageEnum | None = None
-    license: BaseLicenseEnum | None = None
+    license_: BaseLicenseEnum | None = None
 
 
 class BaseUploader(ABC):

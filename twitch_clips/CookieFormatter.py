@@ -8,7 +8,7 @@ from .Logger import BaseLogger, Logger
 
 
 class BaseCookieFormatter(ABC):
-    """Base class for Cookie Formatter"""
+    """Base class for Cookie Formatter."""
 
     @abstractmethod
     def save(
@@ -16,7 +16,7 @@ class BaseCookieFormatter(ABC):
         formatted_cookies_file_path: Path,
         unformatted_cookies_file_path: Path,
     ) -> None:
-        """Formats cookies to a file"""
+        """Format cookies to a file."""
 
 
 class JSONNetScapeFormatter(BaseCookieFormatter):
@@ -28,11 +28,11 @@ class JSONNetScapeFormatter(BaseCookieFormatter):
         formatted_cookies_file_path: Path,
         unformatted_cookies_file_path: Path,
     ) -> None:
-        """Formats JSON cookies to Netscape format and saves it to a file"""
+        """Format JSON cookies to Netscape format and saves it to a file."""
         self.logger.log("Formatting JSON cookies to Netscape format...")
         self.logger.log("Reading JSON cookie file...")
         json_cookies_data = self._read_json_cookies_file(
-            json_cookies_file_path=unformatted_cookies_file_path
+            json_cookies_file_path=unformatted_cookies_file_path,
         )
         self.logger.log("Formatting extracted cookies to Netscape format...")
         netscape_string = self._to_netscape_string(
@@ -45,7 +45,7 @@ class JSONNetScapeFormatter(BaseCookieFormatter):
         )
         self.logger.log(
             "Finished formatting JSON cookies to Netscape format! "
-            f"Result saved to: {formatted_cookies_file_path}"
+            f"Result saved to: {formatted_cookies_file_path}",
         )
 
     @staticmethod
@@ -53,15 +53,20 @@ class JSONNetScapeFormatter(BaseCookieFormatter):
         json_cookies_file_path: Path,
     ) -> List[dict]:
         if json_cookies_file_path.exists():
-            with open(json_cookies_file_path, "r", encoding="utf-8") as file:
+            with Path.open(json_cookies_file_path, encoding="utf-8") as file:
                 return json.load(file)
-        raise ValueError("JSON cookie file doesn't exist")
+        not_found_error = "JSON cookie file doesn't exist"
+        raise ValueError(not_found_error)
 
     @staticmethod
     def _save_cookies_to_file(
-        netscape_string: str, formatted_cookies_file_path: Path
+        netscape_string: str, formatted_cookies_file_path: Path,
     ) -> None:
-        with open(formatted_cookies_file_path, "w", encoding="utf-8") as file:
+        with Path.open(
+            formatted_cookies_file_path,
+            "w",
+            encoding="utf-8",
+        ) as file:
             netscape_header_text = (
                 "# Netscape HTTP Cookie File\n"
                 "# http://curl.haxx.se/rfc/cookie_spec.html\n"
@@ -96,7 +101,7 @@ class JSONNetScapeFormatter(BaseCookieFormatter):
                     expiry,
                     name,
                     value,
-                ]
+                ],
             )
 
         return "\n".join("\t".join(cookie_parts) for cookie_parts in result)
@@ -115,10 +120,10 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         unformatted_cookies = self._read_stdin()
         self.logger.log("Formatting cookies to Netscape format...")
         formatted_cookies = self._format_stdin_to_netscape(
-            cookies=unformatted_cookies
+            cookies=unformatted_cookies,
         )
         self.logger.log(
-            f"Saving formatted cookies to {formatted_cookies_file_path}..."
+            f"Saving formatted cookies to {formatted_cookies_file_path}...",
         )
         self._save_cookies_to_file(
             netscape_string=formatted_cookies,
@@ -127,7 +132,7 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
 
     def _read_stdin(self) -> List[str]:
         print(
-            "Input Cookie (Press Enter to finish input | Ctrl + C to cancel):"
+            "Input Cookie (Press Enter to finish input | Ctrl + C to cancel):",
         )
         cookies = []
         while True:
@@ -146,11 +151,12 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         for format_ in formats:
             try:
                 return int(
-                    datetime.datetime.strptime(expiration, format_).timestamp()
+                    datetime.datetime.strptime(expiration, format_).timestamp(),
                 )
             except Exception:
                 continue
-        raise ValueError("Failed to convert expiration date")
+        convert_error = "Failed to convert expiration date"
+        raise ValueError(convert_error)
 
     @classmethod
     def _format_stdin_to_netscape(cls, cookies: List[str]) -> str:
@@ -158,7 +164,8 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
             formatted_cookies = []
             for cookie in cookies:
                 cookie_parts = cookie.split("\t")
-                if len(cookie_parts) < 7:
+                cookie_parts_amount = 7
+                if len(cookie_parts) < cookie_parts_amount:
                     continue
                 name = cookie_parts[0]
                 value = cookie_parts[1]
@@ -176,12 +183,12 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
                         (
                             datetime.datetime.now()
                             + datetime.timedelta(days=1)
-                        ).timestamp()
+                        ).timestamp(),
                     )
                 else:
                     try:
                         expiration = cls._convert_expiration(
-                            expiration=expiration
+                            expiration=expiration,
                         )
                     except Exception:
                         continue
@@ -195,18 +202,23 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
                         str(expiration),
                         name,
                         value,
-                    ]
+                    ],
                 )
                 formatted_cookies.append(formatted_cookie_str)
             return "\n".join(formatted_cookies)
         except Exception as e:
-            raise ValueError("Failed to format stdin cookies") from e
+            format_error = "Failed to format stdin cookies"
+            raise ValueError(format_error) from e
 
     @staticmethod
     def _save_cookies_to_file(
-        netscape_string: str, formatted_cookies_file_path: Path
+        netscape_string: str, formatted_cookies_file_path: Path,
     ) -> None:
-        with open(formatted_cookies_file_path, "w", encoding="utf-8") as file:
+        with Path.open(
+            formatted_cookies_file_path,
+            "w",
+            encoding="utf-8",
+        ) as file:
             netscape_header_text = (
                 "# Netscape HTTP Cookie File\n"
                 "# http://curl.haxx.se/rfc/cookie_spec.html\n"

@@ -43,28 +43,29 @@ class YoutubeUploaderViaCookies(BaseUploader):
     def _get_uploader(self) -> YTUploaderSession:
         for retry in range(self.retries):
             try:
-                uploader = YTUploaderSession.from_cookies_txt(
-                    cookies_txt_path=self.cookies_path
+                return YTUploaderSession.from_cookies_txt(
+                    cookies_txt_path=self.cookies_path,
                 )
-                return uploader
+
             except Exception:
                 self.logger.log(
                     "Failed to get Cookie-Uploader. "
-                    f"Attempt: {retry + 1}/{self.retries}"
+                    f"Attempt: {retry + 1}/{self.retries}",
                 )
-        raise RuntimeError(
+        get_uploader_error = (
             f"Failed to get Cookie-Uploader after {self.retries} attempts"
         )
+        raise RuntimeError(get_uploader_error)
 
     def has_valid_cookies(self) -> bool:
-        """Checks if the provided cookies file is valid."""
+        """Check if the provided cookies file is valid."""
         self.logger.log("Validating cookies...")
         is_valid = False
         for retry in range(self.retries):
             if not self.uploader.has_valid_cookies():
                 self.logger.log(
                     "Invalid cookies provided, or cookies file not found. "
-                    f"Attempt: {retry + 1}/{self.retries}"
+                    f"Attempt: {retry + 1}/{self.retries}",
                 )
                 is_valid = False
                 time.sleep(randint(0, 2))
@@ -112,12 +113,12 @@ class YoutubeUploaderViaCookies(BaseUploader):
                 language = LanguageEnum.ENGLISH_UNITED_STATES
 
         license_ = LicenseEnum.STANDARD
-        if video_info.license is None:
+        if video_info.license_ is None:
             license_ = LicenseEnum.STANDARD
-        if video_info.license is not None:
-            if video_info.license == BaseLicenseEnum.STANDARD:
+        if video_info.license_ is not None:
+            if video_info.license_ == BaseLicenseEnum.STANDARD:
                 license_ = LicenseEnum.STANDARD
-            if video_info.license == BaseLicenseEnum.CREATIVE_COMMONS:
+            if video_info.license_ == BaseLicenseEnum.CREATIVE_COMMONS:
                 license_ = LicenseEnum.CREATIVE_COMMONS
 
         self.logger.log(f"Uploading video: {video_info.title}")
@@ -145,13 +146,14 @@ class YoutubeUploaderViaCookies(BaseUploader):
                 if attempt < self.retries - 1 and "Daily limit" not in str(e):
                     self.logger.log(
                         f"Error uploading video: {video_info.title}. "
-                        f"Retrying... ({e})"
+                        f"Retrying... ({e})",
                     )
                     time.sleep(randint(3, 10))
                     continue
-                raise RuntimeError(
-                    f"Error uploading video: {video_info.title} ({e})"
-                ) from e
+                upload_error = (
+                    f"Failed to upload video: {video_info.title} ({e})"
+                )
+                raise RuntimeError(upload_error) from e
 
     def close_session(self) -> None:
         self.uploader._session.close()

@@ -29,7 +29,8 @@ class VerticalVideoConverter:
             )
             return Path(output_file_path)
         except Exception as e:
-            raise RuntimeError("Error creating background file") from e
+            file_creation_error = "Failed to create background file"
+            raise RuntimeError(file_creation_error) from e
 
     @staticmethod
     def create_vertical_video(
@@ -42,7 +43,7 @@ class VerticalVideoConverter:
             clip = clip.subclip(0, clip.duration)
             resized_clip = clip.resize(width=1080)
             centered_resized_clip = resized_clip.with_position(
-                ("center", "center")
+                ("center", "center"),
             )
             background = VideoFileClip(str(background_path))
             video = CompositeVideoClip([background, centered_resized_clip])
@@ -53,4 +54,5 @@ class VerticalVideoConverter:
             )
             return output_path
         except Exception as e:
-            raise RuntimeError("Failed to create vertical video") from e
+            file_creation_error = "Failed to create vertical video"
+            raise RuntimeError(file_creation_error) from e
