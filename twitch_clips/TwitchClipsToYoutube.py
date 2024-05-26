@@ -65,12 +65,14 @@ class TwitchClipsToYoutube:
         self.args = parser.parse_args()
 
         self.max_videos = max_videos_to_upload
-        assert self.max_videos > 0, "Max videos must be at least 1"
+        if not self.max_videos > 0:
+            max_videos_error = "Max videos must be at least 1"
+            raise ValueError(max_videos_error)
 
         self.cookies_folder_path = cookies_settings.cookies_folder_path
         self.retries = cookies_settings.cookies_validation_retries
         self.json_cookies_path = Path(
-            f"{self.cookies_folder_path}/cookies.json"
+            f"{self.cookies_folder_path}/cookies.json",
         )
         self.cookies_path = Path(f"{self.cookies_folder_path}/cookies.txt")
 
@@ -82,10 +84,16 @@ class TwitchClipsToYoutube:
             min_duration=3,
             max_duration=58,
         )
-        if self.vertical_video_range.max_duration > 58:
-            raise ValueError(
-                "Max vertical video duration must be less than 58"
+        max_vertical_video_duration = 58
+        if (
+            self.vertical_video_range.max_duration
+            > max_vertical_video_duration
+        ):
+            vertical_video_duration_error = (
+                "Max vertical video duration must be less "
+                f"than {max_vertical_video_duration}"
             )
+            raise ValueError(vertical_video_duration_error)
 
         self.clips_folder_path = twitch_data.clips_folder_path
         self._create_clips_folder(clips_folder=self.clips_folder_path)
@@ -136,9 +144,8 @@ class TwitchClipsToYoutube:
             except Exception as e:
                 raise e
             return
-        raise RuntimeError(
-            "Unable to read cookies from stdin. Use --cookies flag."
-        )
+        stdin_error = "Unable to read cookies from stdin. Use --cookies flag."
+        raise RuntimeError(stdin_error)
 
     def _get_uploader(self) -> BaseUploader:
         if self._check_cookies_file():
@@ -154,7 +161,8 @@ class TwitchClipsToYoutube:
             yt_uploader, _ = self._get_cookies_uploader()
             if yt_uploader is not None:
                 return yt_uploader
-        raise ValueError("No valid cookies or client secret provided")
+        no_cookies_error = "No valid cookies or client secret provided"
+        raise ValueError(no_cookies_error)
 
     def _check_cookies_file(self) -> bool:
         cookies_folder = self.cookies_folder_path
@@ -162,7 +170,7 @@ class TwitchClipsToYoutube:
         json_cookies_path = self.json_cookies_path
         if not cookies_folder.exists():
             self.logger.log(
-                "Cookies folder doesn't exist. Creating new one..."
+                "Cookies folder doesn't exist. Creating new one...",
             )
             cookies_folder.mkdir(parents=True, exist_ok=True)
             return False
@@ -170,7 +178,7 @@ class TwitchClipsToYoutube:
             if json_cookies_path.exists():
                 try:
                     netscape_formatter = JSONNetScapeFormatter(
-                        logger=self.logger
+                        logger=self.logger,
                     )
                     netscape_formatter.save(
                         unformatted_cookies_file_path=json_cookies_path,
@@ -186,15 +194,17 @@ class TwitchClipsToYoutube:
     def _filter_clips(self, clips: list[ClipInfo]) -> list[ClipInfo]:
         filtered_clips_info = (
             self.twitch_downloader.filter_clips_by_unsupported_words(
-                clips_info=clips, unsupported_words=self.unsupported_words
+                clips_info=clips,
+                unsupported_words=self.unsupported_words,
             )
         )
         filtered_clips_info = self.twitch_downloader.demojize_clips(
-            clips_info=filtered_clips_info
+            clips_info=filtered_clips_info,
         )
         filtered_clips_info, _ = (
             self.twitch_downloader.filter_clips_by_used_titles(
-                clips_info=filtered_clips_info, used_titles=self.used_titles
+                clips_info=filtered_clips_info,
+                used_titles=self.used_titles,
             )
         )
         return filtered_clips_info
@@ -203,12 +213,13 @@ class TwitchClipsToYoutube:
         try:
             return self.twitch_downloader.download_clip(clip_info=clip_info)
         except Exception as e:
-            raise RuntimeError(
-                f"Failed to download clip: {clip_info.slug}"
-            ) from e
+            download_error = f"Failed to download clip: {clip_info.slug}"
+            raise RuntimeError(download_error) from e
 
     def _generate_video_metadata(
-        self, clip_info: ClipInfo, is_vertical: bool | None = None
+        self,
+        clip_info: ClipInfo,
+        is_vertical: bool | None = None,
     ) -> tuple[str, str, list[str]]:
         title = f"{clip_info.title}"
         description = ""
@@ -230,13 +241,16 @@ class TwitchClipsToYoutube:
                     description += "\n\n"
                 description += f"{self.custom_metadata.custom_description}"
             if self.custom_metadata.custom_tags is not None and isinstance(
-                self.custom_metadata.custom_tags, list
+                self.custom_metadata.custom_tags,
+                list,
             ):
                 tags.extend(self.custom_metadata.custom_tags)
         title = title.strip()
         description = description.strip()
-        if len(title) > 99:
-            raise RuntimeError("Title length is more than 99 characters")
+        title_length_limit = 99
+        if len(title) > title_length_limit:
+            title_length_error = "Title length is more than 99 characters"
+            raise RuntimeError(title_length_error)
         return title, description, tags
 
     def _convert_clip_to_vertical(
@@ -249,7 +263,7 @@ class TwitchClipsToYoutube:
                 VerticalVideoConverter.create_background_file(
                     output_file_path=Path(
                         f"{self.clips_folder_path}/{clip_info.id}"
-                        "_background.mp4"
+                        "_background.mp4",
                     ),
                     duration=clip_info.durationSeconds,
                     framerate=clip_info.framerate,
@@ -259,7 +273,7 @@ class TwitchClipsToYoutube:
                 clip_path=clip_path,
                 background_path=background_file_path,
                 output_path=Path(
-                    f"{self.clips_folder_path}/{clip_info.id}_vertical.mp4"
+                    f"{self.clips_folder_path}/{clip_info.id}_vertical.mp4",
                 ),
             )
             for path in (background_file_path, clip_path):
@@ -281,7 +295,8 @@ class TwitchClipsToYoutube:
             clip_path = self._download_clip(clip_info)
             try:
                 title, description, tags = self._generate_video_metadata(
-                    clip_info, is_vertical
+                    clip_info,
+                    is_vertical,
                 )
             except RuntimeError as e:
                 self.logger.log(f"{e}")
@@ -326,7 +341,7 @@ class TwitchClipsToYoutube:
                         and self.custom_metadata.video_properties
                         else None
                     ),
-                )
+                ),
             )
             self.used_titles.append(clip_info.title)
             deletion_status, log_info = (
@@ -342,14 +357,15 @@ class TwitchClipsToYoutube:
 
     def run(self) -> None:
         all_clips_json = self.twitch_downloader.get_clips(
-            period=self.twitch_clips_period, clips_limit=self.clips_limit
+            period=self.twitch_clips_period,
+            clips_limit=self.clips_limit,
         )
         all_clips_info = self.twitch_downloader.generate_clips_info(
-            clips_json=all_clips_json
+            clips_json=all_clips_json,
         )
         filtered_clips = self._filter_clips(clips=all_clips_info)
         sorted_clips_info_by_views = self.twitch_downloader.sort_by_views(
-            clips_info=filtered_clips
+            clips_info=filtered_clips,
         )
         posted_videos = 0
         for clip_info in sorted_clips_info_by_views:
