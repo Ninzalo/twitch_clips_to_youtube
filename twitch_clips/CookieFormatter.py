@@ -60,7 +60,8 @@ class JSONNetScapeFormatter(BaseCookieFormatter):
 
     @staticmethod
     def _save_cookies_to_file(
-        netscape_string: str, formatted_cookies_file_path: Path,
+        netscape_string: str,
+        formatted_cookies_file_path: Path,
     ) -> None:
         with Path.open(
             formatted_cookies_file_path,
@@ -151,7 +152,9 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         for format_ in formats:
             try:
                 return int(
-                    datetime.datetime.strptime(expiration, format_).timestamp(),
+                    datetime.datetime.strptime(
+                        expiration, format_
+                    ).timestamp(),
                 )
             except Exception:
                 continue
@@ -212,7 +215,8 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
 
     @staticmethod
     def _save_cookies_to_file(
-        netscape_string: str, formatted_cookies_file_path: Path,
+        netscape_string: str,
+        formatted_cookies_file_path: Path,
     ) -> None:
         with Path.open(
             formatted_cookies_file_path,

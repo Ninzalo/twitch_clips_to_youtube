@@ -52,7 +52,9 @@ class TwitchClipsDownloader:
         self.twitch_urls = twitch_urls
 
     def get_clips(
-        self, clips_limit: int | None = None, period: PeriodEnum | None = None,
+        self,
+        clips_limit: int | None = None,
+        period: PeriodEnum | None = None,
     ) -> list[dict]:
         self.logger.log("Getting clips...")
         all_clips_json = []
@@ -111,7 +113,8 @@ class TwitchClipsDownloader:
             durationSeconds=clip_dict["durationSeconds"],
             broadcaster=clip_dict["broadcaster"]["login"],
             quality=clip_dict.get(
-                "videoQualities", default_quality_dict.get("videoQualities"),
+                "videoQualities",
+                default_quality_dict.get("videoQualities"),
             )[0].get("quality"),
             framerate=int(
                 clip_dict.get(
@@ -132,7 +135,9 @@ class TwitchClipsDownloader:
         return clips_info
 
     def filter_clips_by_unsupported_words(
-        self, clips_info: list[ClipInfo], unsupported_words: list[str],
+        self,
+        clips_info: list[ClipInfo],
+        unsupported_words: list[str],
     ) -> list[ClipInfo]:
         self.logger.log("Filtering clips by unsupported words...")
 
@@ -169,7 +174,9 @@ class TwitchClipsDownloader:
         return demojized_clips
 
     def filter_clips_by_used_titles(
-        self, clips_info: list[ClipInfo], used_titles: list[str],
+        self,
+        clips_info: list[ClipInfo],
+        used_titles: list[str],
     ) -> tuple[list[ClipInfo], list[str]]:
         self.logger.log("Filtering clips by used titles...")
         new_used_titles = []
@@ -195,7 +202,9 @@ class TwitchClipsDownloader:
         return filtered_clips_info, new_used_titles
 
     def sort_by_views(
-        self, clips_info: list[ClipInfo], reverse: bool | None = None,
+        self,
+        clips_info: list[ClipInfo],
+        reverse: bool | None = None,
     ) -> list[ClipInfo]:
         self.logger.log("Sorting clips by views...")
         is_reverse = True if reverse is None else not bool(reverse)
@@ -211,7 +220,9 @@ class TwitchClipsDownloader:
         return sorted_clips_info
 
     def download_clip(
-        self, clip_info: ClipInfo, clip_format: str | None = None,
+        self,
+        clip_info: ClipInfo,
+        clip_format: str | None = None,
     ) -> Path:
         self.logger.log(
             f'Downloading clip "{clip_info.title}" from: https://www.twitch.tv'
@@ -237,7 +248,9 @@ class TwitchClipsDownloader:
         return Path(file_path)
 
     def download_multiple_clips(
-        self, clips_info: list[ClipInfo], clips_format: str | None = None,
+        self,
+        clips_info: list[ClipInfo],
+        clips_format: str | None = None,
     ) -> list[Path]:
         self.logger.log("Downloading multiple clips...")
         if not clips_format:
