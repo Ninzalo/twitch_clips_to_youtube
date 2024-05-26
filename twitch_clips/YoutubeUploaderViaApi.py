@@ -35,7 +35,9 @@ class YoutubeUploaderViaApi(BaseUploader):
         publish_time = datetime.now(eastern_tz)
         if days > 0:
             publish_time = datetime.now(eastern_tz) + timedelta(days)
-        publish_time = publish_time.replace(hour=14, minute=0, second=0, microsecond=0)
+        publish_time = publish_time.replace(
+            hour=14, minute=0, second=0, microsecond=0
+        )
 
         # Set the publish time in the UTC timezone
         publish_time_utc = publish_time.astimezone(pytz.utc).strftime(
@@ -59,7 +61,9 @@ class YoutubeUploaderViaApi(BaseUploader):
     def getYoutubeService(self):
         credentials = self.authorize_credentials()
         http = credentials.authorize(httplib2.Http())
-        discovery_url = "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"
+        discovery_url = (
+            "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"
+        )
         service = discovery.build(
             "youtube", "v3", http=http, discoveryServiceUrl=discovery_url
         )
@@ -110,14 +114,18 @@ class YoutubeUploaderViaApi(BaseUploader):
             # Print the response after the video has been uploaded
             self.logger.log("Video uploaded successfully!")
             self.logger.log(f'Title: {response["snippet"]["title"]}')
-            self.logger.log(f'URL: https://www.youtube.com/watch?v={response["id"]}')
+            self.logger.log(
+                f'URL: https://www.youtube.com/watch?v={response["id"]}'
+            )
 
         except HttpError as e:
             raise RuntimeError(
                 f"An HTTP error {e.resp.status} occurred: {e.content.decode('utf-8')}"
             ) from e
         except Exception as e:
-            raise RuntimeError(f"Error uploading video: {video_info.title}") from e
+            raise RuntimeError(
+                f"Error uploading video: {video_info.title}"
+            ) from e
 
     def close_session(self) -> None:
         pass

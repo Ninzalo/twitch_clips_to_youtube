@@ -41,7 +41,9 @@ class VerticalVideoConverter:
             clip = VideoFileClip(str(clip_path))
             clip = clip.subclip(0, clip.duration)
             resized_clip = clip.resize(width=1080)
-            centered_resized_clip = resized_clip.with_position(("center", "center"))
+            centered_resized_clip = resized_clip.with_position(
+                ("center", "center")
+            )
             background = VideoFileClip(str(background_path))
             video = CompositeVideoClip([background, centered_resized_clip])
             video.write_videofile(

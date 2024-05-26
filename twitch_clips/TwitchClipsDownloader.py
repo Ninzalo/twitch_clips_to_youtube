@@ -5,7 +5,6 @@ from copy import deepcopy
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import List, Tuple
 
 import emoji
 
@@ -21,12 +20,12 @@ class PeriodEnum(str, Enum):
 
 @dataclass
 class TwitchData:
-    channels_urls: List[str]
+    channels_urls: list[str]
     clips_folder_path: Path
     clips_period: PeriodEnum | None = None
     clips_per_channel_limit: int | None = None
-    unsupported_words_for_title: List[str] | None = None
-    used_titles: List[str] | None = None
+    unsupported_words_for_title: list[str] | None = None
+    used_titles: list[str] | None = None
 
 
 @dataclass
@@ -44,7 +43,7 @@ class ClipInfo:
 class TwitchClipsDownloader:
     def __init__(
         self,
-        twitch_urls: List[str],
+        twitch_urls: list[str],
         clips_folder_path: Path,
         logger: BaseLogger | None = None,
     ):
@@ -54,7 +53,7 @@ class TwitchClipsDownloader:
 
     def get_clips(
         self, clips_limit: int | None = None, period: PeriodEnum | None = None
-    ) -> List[dict]:
+    ) -> list[dict]:
         self.logger.log("Getting clips...")
         all_clips_json = []
         for twitch_url in self.twitch_urls:
@@ -116,12 +115,13 @@ class TwitchClipsDownloader:
             )[0].get("quality"),
             framerate=int(
                 clip_dict.get(
-                    "videoQualities", default_quality_dict.get("videoQualities")
+                    "videoQualities",
+                    default_quality_dict.get("videoQualities"),
                 )[0].get("frameRate")
             ),
         )
 
-    def generate_clips_info(self, clips_json: List[dict]) -> List[ClipInfo]:
+    def generate_clips_info(self, clips_json: list[dict]) -> list[ClipInfo]:
         self.logger.log("Generating clips info...")
         clips_info = []
         for clip_dict in clips_json:
@@ -132,8 +132,8 @@ class TwitchClipsDownloader:
         return clips_info
 
     def filter_clips_by_unsupported_words(
-        self, clips_info: List[ClipInfo], unsupported_words: List[str]
-    ) -> List[ClipInfo]:
+        self, clips_info: list[ClipInfo], unsupported_words: list[str]
+    ) -> list[ClipInfo]:
         self.logger.log("Filtering clips by unsupported words...")
 
         def filter_unsupported_words(clip_info: ClipInfo) -> bool:
@@ -142,7 +142,9 @@ class TwitchClipsDownloader:
                     return False
             return True
 
-        filtered_clips_info = list(filter(filter_unsupported_words, clips_info))
+        filtered_clips_info = list(
+            filter(filter_unsupported_words, clips_info)
+        )
         reduced_by = len(clips_info) - len(filtered_clips_info)
         self.logger.log(
             "Filtering clips by unsupported words is done! "
@@ -158,7 +160,7 @@ class TwitchClipsDownloader:
             title=str(emoji.demojize(clip_info.title)),
         )
 
-    def demojize_clips(self, clips_info: List[ClipInfo]) -> List[ClipInfo]:
+    def demojize_clips(self, clips_info: list[ClipInfo]) -> list[ClipInfo]:
         self.logger.log("Demojizing clips titles...")
         demojized_clips = [
             self._demojize_clip_title(clip_info) for clip_info in clips_info
@@ -167,8 +169,8 @@ class TwitchClipsDownloader:
         return demojized_clips
 
     def filter_clips_by_used_titles(
-        self, clips_info: List[ClipInfo], used_titles: List[str]
-    ) -> Tuple[List[ClipInfo], List[str]]:
+        self, clips_info: list[ClipInfo], used_titles: list[str]
+    ) -> tuple[list[ClipInfo], list[str]]:
         self.logger.log("Filtering clips by used titles...")
         new_used_titles = []
 
@@ -193,8 +195,8 @@ class TwitchClipsDownloader:
 
     def filter_out_long_titles(
         self,
-        clips_info: List[ClipInfo],
-    ) -> List[ClipInfo]:
+        clips_info: list[ClipInfo],
+    ) -> list[ClipInfo]:
         self.logger.log("Filtering out clips with too long titles...")
         filtered_clips = [
             clip_info for clip_info in clips_info if len(clip_info.title) <= 50
@@ -207,8 +209,8 @@ class TwitchClipsDownloader:
         return filtered_clips
 
     def sort_by_views(
-        self, clips_info: List[ClipInfo], reverse: bool | None = None
-    ) -> List[ClipInfo]:
+        self, clips_info: list[ClipInfo], reverse: bool | None = None
+    ) -> list[ClipInfo]:
         self.logger.log("Sorting clips by views...")
         is_reverse = True if reverse is None else not bool(reverse)
         sorted_clips_info = sorted(
@@ -230,7 +232,9 @@ class TwitchClipsDownloader:
         )
         if not clip_format:
             clip_format = "mp4"
-        file_path = Path(f"{self.clips_folder_path}/{clip_info.id}.{clip_format}")
+        file_path = Path(
+            f"{self.clips_folder_path}/{clip_info.id}.{clip_format}"
+        )
         command = [
             "twitch-dl",
             "download",
@@ -246,8 +250,8 @@ class TwitchClipsDownloader:
         return Path(file_path)
 
     def download_multiple_clips(
-        self, clips_info: List[ClipInfo], clips_format: str | None = None
-    ) -> List[Path]:
+        self, clips_info: list[ClipInfo], clips_format: str | None = None
+    ) -> list[Path]:
         self.logger.log("Downloading multiple clips...")
         if not clips_format:
             clips_format = "mp4"
@@ -262,7 +266,7 @@ class TwitchClipsDownloader:
         self.logger.log(f"Downloaded {self._count_downloaded_clips()} clips")
         return files_paths
 
-    def delete_clip_by_path(self, path: Path) -> Tuple[bool, str]:
+    def delete_clip_by_path(self, path: Path) -> tuple[bool, str]:
         self.logger.log(f"Deleting clip {path}...")
         if path.exists():
             os.remove(path)

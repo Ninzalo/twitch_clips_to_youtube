@@ -1,7 +1,6 @@
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Tuple
 
 from .BaseYoutubeUploader import (
     BaseLanguageEnum,
@@ -31,7 +30,7 @@ class VideoProperties:
 @dataclass
 class CustomVideoMetadata:
     custom_description: str | None = None
-    custom_tags: List[str] | None = None
+    custom_tags: list[str] | None = None
     streamer_url_in_desc: bool | None = None
     streamer_tag_in_title: bool | None = None
     shorts_tag_in_title: bool | None = None
@@ -70,7 +69,9 @@ class TwitchClipsToYoutube:
 
         self.cookies_folder_path = cookies_settings.cookies_folder_path
         self.retries = cookies_settings.cookies_validation_retries
-        self.json_cookies_path = Path(f"{self.cookies_folder_path}/cookies.json")
+        self.json_cookies_path = Path(
+            f"{self.cookies_folder_path}/cookies.json"
+        )
         self.cookies_path = Path(f"{self.cookies_folder_path}/cookies.txt")
 
         self.yt_uploader = self._get_uploader()
@@ -82,7 +83,9 @@ class TwitchClipsToYoutube:
             max_duration=58,
         )
         if self.vertical_video_range.max_duration > 58:
-            raise ValueError("Max vertical video duration must be less than 58")
+            raise ValueError(
+                "Max vertical video duration must be less than 58"
+            )
 
         self.clips_folder_path = twitch_data.clips_folder_path
         self._create_clips_folder(clips_folder=self.clips_folder_path)
@@ -104,7 +107,9 @@ class TwitchClipsToYoutube:
             self.logger.log("Clips folder doesn't exist. Creating new one...")
             clips_folder.mkdir(parents=True, exist_ok=True)
 
-    def _get_cookies_uploader(self) -> Tuple[YoutubeUploaderViaCookies | None, bool]:
+    def _get_cookies_uploader(
+        self,
+    ) -> tuple[YoutubeUploaderViaCookies | None, bool]:
         try:
             cookies_uploader = YoutubeUploaderViaCookies(
                 cookies_path=self.cookies_path,
@@ -124,14 +129,16 @@ class TwitchClipsToYoutube:
             try:
                 StdinNetScapeFormatter(logger=self.logger).save(
                     formatted_cookies_file_path=self.cookies_path,
-                    unformatted_cookies_file_path=Path(""),
+                    unformatted_cookies_file_path=Path(),
                 )
             except ValueError as e:
                 raise e
             except Exception as e:
                 raise e
             return
-        raise RuntimeError("Unable to read cookies from stdin. Use --cookies flag.")
+        raise RuntimeError(
+            "Unable to read cookies from stdin. Use --cookies flag."
+        )
 
     def _get_uploader(self) -> BaseUploader:
         if self._check_cookies_file():
@@ -154,13 +161,17 @@ class TwitchClipsToYoutube:
         cookies_path = self.cookies_path
         json_cookies_path = self.json_cookies_path
         if not cookies_folder.exists():
-            self.logger.log("Cookies folder doesn't exist. Creating new one...")
+            self.logger.log(
+                "Cookies folder doesn't exist. Creating new one..."
+            )
             cookies_folder.mkdir(parents=True, exist_ok=True)
             return False
         if not cookies_path.exists():
             if json_cookies_path.exists():
                 try:
-                    netscape_formatter = JSONNetScapeFormatter(logger=self.logger)
+                    netscape_formatter = JSONNetScapeFormatter(
+                        logger=self.logger
+                    )
                     netscape_formatter.save(
                         unformatted_cookies_file_path=json_cookies_path,
                         formatted_cookies_file_path=cookies_path,
@@ -172,15 +183,19 @@ class TwitchClipsToYoutube:
             return False
         return True
 
-    def _filter_clips(self, clips: List[ClipInfo]) -> List[ClipInfo]:
-        filtered_clips_info = self.twitch_downloader.filter_clips_by_unsupported_words(
-            clips_info=clips, unsupported_words=self.unsupported_words
+    def _filter_clips(self, clips: list[ClipInfo]) -> list[ClipInfo]:
+        filtered_clips_info = (
+            self.twitch_downloader.filter_clips_by_unsupported_words(
+                clips_info=clips, unsupported_words=self.unsupported_words
+            )
         )
         filtered_clips_info = self.twitch_downloader.demojize_clips(
             clips_info=filtered_clips_info
         )
-        filtered_clips_info, _ = self.twitch_downloader.filter_clips_by_used_titles(
-            clips_info=filtered_clips_info, used_titles=self.used_titles
+        filtered_clips_info, _ = (
+            self.twitch_downloader.filter_clips_by_used_titles(
+                clips_info=filtered_clips_info, used_titles=self.used_titles
+            )
         )
         return filtered_clips_info
 
@@ -188,11 +203,13 @@ class TwitchClipsToYoutube:
         try:
             return self.twitch_downloader.download_clip(clip_info=clip_info)
         except Exception as e:
-            raise RuntimeError(f"Failed to download clip: {clip_info.slug}") from e
+            raise RuntimeError(
+                f"Failed to download clip: {clip_info.slug}"
+            ) from e
 
     def _generate_video_metadata(
         self, clip_info: ClipInfo, is_vertical: bool | None = None
-    ) -> Tuple[str, str, List[str]]:
+    ) -> tuple[str, str, list[str]]:
         title = f"{clip_info.title}"
         description = ""
         tags = [f"{clip_info.broadcaster}"]
@@ -205,8 +222,9 @@ class TwitchClipsToYoutube:
                 description += (
                     f"Streamer: https://www.twitch.tv/{clip_info.broadcaster}"
                 )
-            if self.custom_metadata.custom_description is not None and isinstance(
-                self.custom_metadata.custom_description, str
+            if (
+                self.custom_metadata.custom_description is not None
+                and isinstance(self.custom_metadata.custom_description, str)
             ):
                 if description != "":
                     description += "\n\n"
@@ -227,12 +245,15 @@ class TwitchClipsToYoutube:
         clip_info: ClipInfo,
     ) -> Path:
         try:
-            background_file_path = VerticalVideoConverter.create_background_file(
-                output_file_path=Path(
-                    f"{self.clips_folder_path}/{clip_info.id}_background.mp4"
-                ),
-                duration=clip_info.durationSeconds,
-                framerate=clip_info.framerate,
+            background_file_path = (
+                VerticalVideoConverter.create_background_file(
+                    output_file_path=Path(
+                        f"{self.clips_folder_path}/{clip_info.id}"
+                        "_background.mp4"
+                    ),
+                    duration=clip_info.durationSeconds,
+                    framerate=clip_info.framerate,
+                )
             )
             vertical_video_path = VerticalVideoConverter.create_vertical_video(
                 clip_path=clip_path,
@@ -242,8 +263,8 @@ class TwitchClipsToYoutube:
                 ),
             )
             for path in (background_file_path, clip_path):
-                deletion_status, log_info = self.twitch_downloader.delete_clip_by_path(
-                    path=path
+                deletion_status, log_info = (
+                    self.twitch_downloader.delete_clip_by_path(path=path)
                 )
                 if not deletion_status:
                     self.logger.log(f"{log_info}")
@@ -308,8 +329,8 @@ class TwitchClipsToYoutube:
                 )
             )
             self.used_titles.append(clip_info.title)
-            deletion_status, log_info = self.twitch_downloader.delete_clip_by_path(
-                clip_path
+            deletion_status, log_info = (
+                self.twitch_downloader.delete_clip_by_path(clip_path)
             )
             if not deletion_status:
                 self.logger.log(log_info)

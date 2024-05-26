@@ -11,7 +11,11 @@ from .CookieFormatter import (
     StdinNetScapeFormatter,
 )
 from .Logger import BaseLogger, Logger
-from .TwitchClipsDownloader import PeriodEnum, TwitchClipsDownloader, TwitchData
+from .TwitchClipsDownloader import (
+    PeriodEnum,
+    TwitchClipsDownloader,
+    TwitchData,
+)
 from .TwitchClipsToYoutube import (
     CustomVideoMetadata,
     TwitchClipsToYoutube,

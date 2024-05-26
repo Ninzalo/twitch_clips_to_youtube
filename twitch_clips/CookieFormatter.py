@@ -114,15 +114,21 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         self.logger.log("Reading cookies from STDIN...")
         unformatted_cookies = self._read_stdin()
         self.logger.log("Formatting cookies to Netscape format...")
-        formatted_cookies = self._format_stdin_to_netscape(cookies=unformatted_cookies)
-        self.logger.log(f"Saving formatted cookies to {formatted_cookies_file_path}...")
+        formatted_cookies = self._format_stdin_to_netscape(
+            cookies=unformatted_cookies
+        )
+        self.logger.log(
+            f"Saving formatted cookies to {formatted_cookies_file_path}..."
+        )
         self._save_cookies_to_file(
             netscape_string=formatted_cookies,
             formatted_cookies_file_path=formatted_cookies_file_path,
         )
 
     def _read_stdin(self) -> List[str]:
-        print("Input Cookie (Press Enter to finish input | Ctrl + C to cancel):")
+        print(
+            "Input Cookie (Press Enter to finish input | Ctrl + C to cancel):"
+        )
         cookies = []
         while True:
             try:
@@ -139,7 +145,9 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         formats = ["%Y-%m-%dT%H:%M:%S.%fZ", "%d.%m.%Y, %H:%M:%S"]
         for format_ in formats:
             try:
-                return int(datetime.datetime.strptime(expiration, format_).timestamp())
+                return int(
+                    datetime.datetime.strptime(expiration, format_).timestamp()
+                )
             except Exception:
                 continue
         raise ValueError("Failed to convert expiration date")
@@ -166,17 +174,28 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
                 if expiration in ("Session", "Сеанс"):
                     expiration = int(
                         (
-                            datetime.datetime.now() + datetime.timedelta(days=1)
+                            datetime.datetime.now()
+                            + datetime.timedelta(days=1)
                         ).timestamp()
                     )
                 else:
                     try:
-                        expiration = cls._convert_expiration(expiration=expiration)
+                        expiration = cls._convert_expiration(
+                            expiration=expiration
+                        )
                     except Exception:
                         continue
 
                 formatted_cookie_str = "\t".join(
-                    [domain, "TRUE", path, http_only, str(expiration), name, value]
+                    [
+                        domain,
+                        "TRUE",
+                        path,
+                        http_only,
+                        str(expiration),
+                        name,
+                        value,
+                    ]
                 )
                 formatted_cookies.append(formatted_cookie_str)
             return "\n".join(formatted_cookies)
