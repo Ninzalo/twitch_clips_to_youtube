@@ -3,7 +3,8 @@ from datetime import datetime, timedelta
 
 import httplib2
 import pytz
-from googleapiclient import Resource, discovery
+from googleapiclient import discovery
+from googleapiclient.discovery import Resource
 from googleapiclient.errors import HttpError
 from googleapiclient.http import MediaFileUpload
 from oauth2client.client import Credentials, flow_from_clientsecrets
