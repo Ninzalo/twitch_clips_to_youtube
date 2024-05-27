@@ -46,7 +46,7 @@ class TwitchClipsDownloader:
         twitch_urls: list[str],
         clips_folder_path: Path,
         logger: BaseLogger | None = None,
-    ):
+    ) -> None:
         self.clips_folder_path = clips_folder_path
         self.logger = logger if logger else Logger()
         self.twitch_urls = twitch_urls

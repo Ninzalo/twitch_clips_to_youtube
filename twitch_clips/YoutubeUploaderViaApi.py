@@ -36,14 +36,13 @@ class YoutubeUploaderViaApi(BaseUploader):
         if days > 0:
             publish_time = datetime.now(eastern_tz) + timedelta(days)
         publish_time = publish_time.replace(
-            hour=14, minute=0, second=0, microsecond=0
+            hour=14, minute=0, second=0, microsecond=0,
         )
 
         # Set the publish time in the UTC timezone
-        publish_time_utc = publish_time.astimezone(pytz.utc).strftime(
-            "%Y-%m-%dT%H:%M:%S.%fZ"
+        return publish_time.astimezone(pytz.utc).strftime(
+            "%Y-%m-%dT%H:%M:%S.%fZ",
         )
-        return publish_time_utc
 
     # Start the OAuth flow to retrieve credentials
     def authorize_credentials(self):
@@ -64,15 +63,14 @@ class YoutubeUploaderViaApi(BaseUploader):
         discovery_url = (
             "https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest"
         )
-        service = discovery.build(
-            "youtube", "v3", http=http, discoveryServiceUrl=discovery_url
+        return discovery.build(
+            "youtube", "v3", http=http, discoveryServiceUrl=discovery_url,
         )
-        return service
 
     def upload(
         self,
         video_info: VideoInfo,
-    ):
+    ) -> None:
         day = 0
 
         if video_info.description is None:
@@ -109,22 +107,24 @@ class YoutubeUploaderViaApi(BaseUploader):
             # Call the API's videos.insert method to upload the video
             videos = youtube.videos()
             response = videos.insert(
-                part="snippet,status", body=body, media_body=media_file
+                part="snippet,status", body=body, media_body=media_file,
             ).execute()
             # Print the response after the video has been uploaded
             self.logger.log("Video uploaded successfully!")
             self.logger.log(f'Title: {response["snippet"]["title"]}')
             self.logger.log(
-                f'URL: https://www.youtube.com/watch?v={response["id"]}'
+                f'URL: https://www.youtube.com/watch?v={response["id"]}',
             )
 
         except HttpError as e:
+            msg = f"An HTTP error {e.resp.status} occurred: {e.content.decode('utf-8')}"
             raise RuntimeError(
-                f"An HTTP error {e.resp.status} occurred: {e.content.decode('utf-8')}"
+                msg,
             ) from e
         except Exception as e:
+            msg = f"Error uploading video: {video_info.title}"
             raise RuntimeError(
-                f"Error uploading video: {video_info.title}"
+                msg,
             ) from e
 
     def close_session(self) -> None:

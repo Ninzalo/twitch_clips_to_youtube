@@ -153,7 +153,7 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
             try:
                 return int(
                     datetime.datetime.strptime(
-                        expiration, format_
+                        expiration, format_,
                     ).timestamp(),
                 )
             except Exception:
