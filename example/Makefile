@@ -9,4 +9,4 @@ stdin-run:
 .PHONY: update
 update:
 	poetry install
-	poetry update
+	poetry update twitch-clips
