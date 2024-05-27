@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "twitch-clips"
-version = "1.10.3"
+version = "1.11.3"
 description = ""
 authors = ["Ninzalo <k-artemiy@mail.ru>"]
 license = "MIT"
