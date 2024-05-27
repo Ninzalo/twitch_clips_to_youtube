@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "<Project Name>"
+version = "0.1.0"
+description = ""
+authors = ["<Author>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+twitch-clips = {git = "https://github.com/Ninzalo/twitch_clips_to_youtube.git"}
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

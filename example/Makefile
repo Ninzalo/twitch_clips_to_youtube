@@ -9,4 +9,4 @@ stdin-run:
 .PHONY: update
 update:
 	poetry install
-	poetry add git+https://github.com/Ninzalo/twitch_clips_to_youtube.git
+	poetry update
