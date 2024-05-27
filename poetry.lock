@@ -2,13 +2,13 @@
 
 [[package]]
 name = "anyio"
-version = "4.3.0"
+version = "4.4.0"
 description = "High level compatibility layer for multiple asynchronous event loop implementations"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "anyio-4.3.0-py3-none-any.whl", hash = "sha256:048e05d0f6caeed70d731f3db756d35dcc1f35747c8c403364a8332c630441b8"},
-    {file = "anyio-4.3.0.tar.gz", hash = "sha256:f75253795a87df48568485fd18cdd2a3fa5c4f7c5be8e5e36637733fce06fed6"},
+    {file = "anyio-4.4.0-py3-none-any.whl", hash = "sha256:c1b2d8f46a8a812513012e1107cb0e68c17159a7a594208005a57dc776e1bdc7"},
+    {file = "anyio-4.4.0.tar.gz", hash = "sha256:5aadc6a1bbb7cdb0bede386cac5e2940f5e2ff3aa20277e991cf028e0585ce94"},
 ]
 
 [package.dependencies]
@@ -419,13 +419,13 @@ test-randomorder = ["pytest-randomly"]
 
 [[package]]
 name = "dataclasses-json"
-version = "0.6.5"
+version = "0.6.6"
 description = "Easily serialize dataclasses to and from JSON."
 optional = false
 python-versions = "<4.0,>=3.7"
 files = [
-    {file = "dataclasses_json-0.6.5-py3-none-any.whl", hash = "sha256:f49c77aa3a85cac5bf5b7f65f4790ca0d2be8ef4d92c75e91ba0103072788a39"},
-    {file = "dataclasses_json-0.6.5.tar.gz", hash = "sha256:1c287594d9fcea72dc42d6d3836cf14848c2dc5ce88f65ed61b36b57f515fe26"},
+    {file = "dataclasses_json-0.6.6-py3-none-any.whl", hash = "sha256:e54c5c87497741ad454070ba0ed411523d46beb5da102e221efb873801b0ba85"},
+    {file = "dataclasses_json-0.6.6.tar.gz", hash = "sha256:0c09827d26fffda27f1be2fed7a7a01a29c5ddcd2eb6393ad5ebf9d77e9deae8"},
 ]
 
 [package.dependencies]
@@ -456,17 +456,20 @@ files = [
 
 [[package]]
 name = "emoji"
-version = "2.11.1"
+version = "2.12.1"
 description = "Emoji for Python"
 optional = false
-python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,>=2.7"
+python-versions = ">=3.7"
 files = [
-    {file = "emoji-2.11.1-py2.py3-none-any.whl", hash = "sha256:b7ba25299bbf520cc8727848ae66b986da32aee27dc2887eaea2bff07226ce49"},
-    {file = "emoji-2.11.1.tar.gz", hash = "sha256:062ff0b3154b6219143f8b9f4b3e5c64c35bc2b146e6e2349ab5f29e218ce1ee"},
+    {file = "emoji-2.12.1-py3-none-any.whl", hash = "sha256:a00d62173bdadc2510967a381810101624a2f0986145b8da0cffa42e29430235"},
+    {file = "emoji-2.12.1.tar.gz", hash = "sha256:4aa0488817691aa58d83764b6c209f8a27c0b3ab3f89d1b8dceca1a62e4973eb"},
 ]
 
+[package.dependencies]
+typing-extensions = ">=4.7.0"
+
 [package.extras]
-dev = ["coverage", "coveralls", "pytest"]
+dev = ["coverage", "pytest (>=7.4.4)"]
 
 [[package]]
 name = "filelock"
@@ -509,13 +512,13 @@ grpcio-gcp = ["grpcio-gcp (>=0.2.2,<1.0.dev0)"]
 
 [[package]]
 name = "google-api-python-client"
-version = "2.128.0"
+version = "2.130.0"
 description = "Google API Client Library for Python"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-api-python-client-2.128.0.tar.gz", hash = "sha256:908af182dfc1cd79412a489b37fe45e4f3cc99c74e80c7c477ca5babaa54eea5"},
-    {file = "google_api_python_client-2.128.0-py2.py3-none-any.whl", hash = "sha256:99da6acb0acc648e309102b0e0262d7fef30f07f6bf56c6eeaa0504ceca113e3"},
+    {file = "google-api-python-client-2.130.0.tar.gz", hash = "sha256:2bba3122b82a649c677b8a694b8e2bbf2a5fbf3420265caf3343bb88e2e9f0ae"},
+    {file = "google_api_python_client-2.130.0-py2.py3-none-any.whl", hash = "sha256:7d45a28d738628715944a9c9d73e8696e7e03ac50b7de87f5e3035cefa94ed3a"},
 ]
 
 [package.dependencies]
@@ -763,17 +766,6 @@ files = [
 setuptools = "*"
 
 [[package]]
-name = "iso8601"
-version = "2.1.0"
-description = "Simple module to parse ISO 8601 dates"
-optional = false
-python-versions = ">=3.7,<4.0"
-files = [
-    {file = "iso8601-2.1.0-py3-none-any.whl", hash = "sha256:aac4145c4dcb66ad8b648a02830f5e2ff6c24af20f4f482689be402db2429242"},
-    {file = "iso8601-2.1.0.tar.gz", hash = "sha256:6b1d3829ee8921c4301998c909f7829fa9ed3cbdac0d3b16af2d743aed1ba8df"},
-]
-
-[[package]]
 name = "kaitaistruct"
 version = "0.10"
 description = "Kaitai Struct declarative parser generator for binary data: runtime library for Python"
@@ -786,17 +778,14 @@ files = [
 
 [[package]]
 name = "m3u8"
-version = "3.6.0"
+version = "4.1.0"
 description = "Python m3u8 parser"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 files = [
-    {file = "m3u8-3.6.0-py3-none-any.whl", hash = "sha256:18c2fc2e4e0906e3a114bc3747d5e73db71aadc72c5d2863a3538dd07c2367ab"},
-    {file = "m3u8-3.6.0.tar.gz", hash = "sha256:d7f17e357e63f90400ae9804bcd193b8935fcca4eb18659aa94f1d7af3b36451"},
+    {file = "m3u8-4.1.0-py3-none-any.whl", hash = "sha256:981daed09f57b7590721b6437278e49f2c36c1bceaa8fbe48f585e1745571d17"},
+    {file = "m3u8-4.1.0.tar.gz", hash = "sha256:3b9d7e5bafbaae89f2464cb16f397887d8decf6b1b48d8de58711414dc1c7b45"},
 ]
-
-[package.dependencies]
-iso8601 = "*"
 
 [[package]]
 name = "marshmallow"
@@ -843,7 +832,7 @@ test = ["coveralls (>=3.0,<4.0)", "pytest (>=3.0.0,<7.0.0)", "pytest-cov (>=2.5.
 type = "git"
 url = "https://github.com/Zulko/moviepy.git"
 reference = "HEAD"
-resolved_reference = "bc8d1a831d2d1f61abfdf1779e8df95d523947a5"
+resolved_reference = "3681cd41f6e4cc12cf3388cbcc1cb37c20979749"
 
 [[package]]
 name = "mypy-extensions"
@@ -1297,13 +1286,13 @@ files = [
 
 [[package]]
 name = "requests"
-version = "2.31.0"
+version = "2.32.2"
 description = "Python HTTP for Humans."
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "requests-2.31.0-py3-none-any.whl", hash = "sha256:58cd2187c01e70e6e26505bca751777aa9f2ee0b7f4300988b709f44e013003f"},
-    {file = "requests-2.31.0.tar.gz", hash = "sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1"},
+    {file = "requests-2.32.2-py3-none-any.whl", hash = "sha256:fc06670dd0ed212426dfeb94fc1b983d917c4f9847c863f313c9dfaaffb7c23c"},
+    {file = "requests-2.32.2.tar.gz", hash = "sha256:dd951ff5ecf3e3b3aa26b40703ba77495dab41da839ae72ef3c8e5d8e2433289"},
 ]
 
 [package.dependencies]
@@ -1358,13 +1347,13 @@ files = [
 
 [[package]]
 name = "selenium"
-version = "4.20.0"
+version = "4.21.0"
 description = ""
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "selenium-4.20.0-py3-none-any.whl", hash = "sha256:b1d0c33b38ca27d0499183e48e1dd09ff26973481f5d3ef2983073813ae6588d"},
-    {file = "selenium-4.20.0.tar.gz", hash = "sha256:0bd564ee166980d419a8aaf4ac00289bc152afcf2eadca5efe8c8e36711853fd"},
+    {file = "selenium-4.21.0-py3-none-any.whl", hash = "sha256:4770ffe5a5264e609de7dc914be6b89987512040d5a8efb2abb181330d097993"},
+    {file = "selenium-4.21.0.tar.gz", hash = "sha256:650dbfa5159895ff00ad16e5ddb6ceecb86b90c7ed2012b3f041f64e6e4904fe"},
 ]
 
 [package.dependencies]
@@ -1475,13 +1464,13 @@ telegram = ["requests"]
 
 [[package]]
 name = "trio"
-version = "0.25.0"
+version = "0.25.1"
 description = "A friendly Python library for async concurrency and I/O"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "trio-0.25.0-py3-none-any.whl", hash = "sha256:e6458efe29cc543e557a91e614e2b51710eba2961669329ce9c862d50c6e8e81"},
-    {file = "trio-0.25.0.tar.gz", hash = "sha256:9b41f5993ad2c0e5f62d0acca320ec657fdb6b2a2c22b8c7aed6caf154475c4e"},
+    {file = "trio-0.25.1-py3-none-any.whl", hash = "sha256:e42617ba091e7b2e50c899052e83a3c403101841de925187f61e7b7eaebdf3fb"},
+    {file = "trio-0.25.1.tar.gz", hash = "sha256:9f5314f014ea3af489e77b001861c535005c3858d38ec46b6b071ebfa339d7fb"},
 ]
 
 [package.dependencies]
@@ -1509,19 +1498,19 @@ wsproto = ">=0.14"
 
 [[package]]
 name = "twitch-dl"
-version = "2.3.0"
+version = "2.3.1"
 description = "Quickly download videos from twitch.tv from the comort of your terminal emulator"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "twitch_dl-2.3.0-py3-none-any.whl", hash = "sha256:71016f686e838c36d550f878678fc8182e498aa5343b2a322d4daa16a3ff401b"},
-    {file = "twitch_dl-2.3.0.tar.gz", hash = "sha256:ff23e255ccca2837f26a112b5e782b4a8d18c3bc0afecc10dd083bc33de3ce6e"},
+    {file = "twitch_dl-2.3.1-py3-none-any.whl", hash = "sha256:1c27acb2c99ac88695552cb01d925733b5d6c7d4de2fe8adb1a501e08f8fe07b"},
+    {file = "twitch_dl-2.3.1.tar.gz", hash = "sha256:4ca29d231e8d53cbab1cf924432b777118b32804875afcdffe3a4798c526e3f7"},
 ]
 
 [package.dependencies]
 click = ">=8.0.0,<9.0.0"
 httpx = ">=0.17.0,<1.0.0"
-m3u8 = ">=1.0.0,<4.0.0"
+m3u8 = ">=3.0.0,<5.0.0"
 
 [package.extras]
 dev = ["build", "pytest", "pyyaml", "setuptools", "twine", "vermin"]
@@ -1529,13 +1518,13 @@ test = ["pytest", "vermin"]
 
 [[package]]
 name = "typing-extensions"
-version = "4.11.0"
+version = "4.12.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "typing_extensions-4.11.0-py3-none-any.whl", hash = "sha256:c1f94d72897edaf4ce775bb7558d5b79d8126906a14ea5ed1635921406c0387a"},
-    {file = "typing_extensions-4.11.0.tar.gz", hash = "sha256:83f085bd5ca59c80295fc2a82ab5dac679cbe02b9f33f7d83af68e241bea51b0"},
+    {file = "typing_extensions-4.12.0-py3-none-any.whl", hash = "sha256:b349c66bea9016ac22978d800cfff206d5f9816951f12a7d0ec5578b0a819594"},
+    {file = "typing_extensions-4.12.0.tar.gz", hash = "sha256:8cbcdc8606ebcb0d95453ad7dc5065e6237b6aa230a31e81d0f440c30fed5fd8"},
 ]
 
 [[package]]
@@ -1620,13 +1609,13 @@ h11 = ">=0.9.0,<1"
 
 [[package]]
 name = "youtube-up"
-version = "0.4.0"
+version = "0.4.1"
 description = "Upload videos to YouTube using the internal YouTube API"
 optional = false
 python-versions = "<4.0,>=3.7"
 files = [
-    {file = "youtube_up-0.4.0-py3-none-any.whl", hash = "sha256:dd2fa65afa0ae1fe068cb3c2520e3216a546090e525b7924794e2ded145f5e41"},
-    {file = "youtube_up-0.4.0.tar.gz", hash = "sha256:61c64488e576c1092522a64d9a047cc7ae28c6ada30dab054b068c428f2adff2"},
+    {file = "youtube_up-0.4.1-py3-none-any.whl", hash = "sha256:dc915d7c8f3f601aebffa7451e0fd2693c0aded276909f9e39c75a4a26dee3c8"},
+    {file = "youtube_up-0.4.1.tar.gz", hash = "sha256:91b3db0afb0023bdf2ad6c90ad43bc768b378b7b3ee0a4dafdc622effe5a90fe"},
 ]
 
 [package.dependencies]

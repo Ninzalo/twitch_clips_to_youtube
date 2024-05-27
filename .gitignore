@@ -2,7 +2,6 @@
 *.ruff_cache
 
 *venv/
-*.lock
 
 .env
 .git
