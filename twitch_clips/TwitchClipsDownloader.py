@@ -33,8 +33,8 @@ class ClipInfo:
     id: str
     slug: str
     title: str
-    viewCount: int
-    durationSeconds: int
+    view_count: int
+    duration_seconds: int
     broadcaster: str
     quality: str
     framerate: int
@@ -109,8 +109,8 @@ class TwitchClipsDownloader:
             id=clip_dict["id"],
             slug=clip_dict["slug"],
             title=clip_dict["title"],
-            viewCount=clip_dict["viewCount"],
-            durationSeconds=clip_dict["durationSeconds"],
+            view_count=clip_dict["viewCount"],
+            duration_seconds=clip_dict["durationSeconds"],
             broadcaster=clip_dict["broadcaster"]["login"],
             quality=clip_dict.get(
                 "videoQualities",
@@ -210,7 +210,7 @@ class TwitchClipsDownloader:
         is_reverse = True if reverse is None else not bool(reverse)
         sorted_clips_info = sorted(
             deepcopy(clips_info),
-            key=lambda clip: clip.viewCount,
+            key=lambda clip: clip.view_count,
             reverse=is_reverse,
         )
         self.logger.log(
@@ -281,7 +281,8 @@ class TwitchClipsDownloader:
         self.logger.log("Cleaning clips folder...")
         for dirs, _, files in os.walk(self.clips_folder_path):
             for file in files:
-                file_path = os.path.join(dirs, file)
+                # file_path = os.path.join(dirs, file)
+                file_path = Path(dirs) / file
                 self.delete_clip_by_path(path=Path(file_path))
         self.logger.log("Clips folder cleaned!")
 

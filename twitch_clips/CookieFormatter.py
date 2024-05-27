@@ -117,6 +117,7 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         formatted_cookies_file_path: Path,
         unformatted_cookies_file_path: Path,
     ) -> None:
+        del unformatted_cookies_file_path
         self.logger.log("Reading cookies from STDIN...")
         unformatted_cookies = self._read_stdin()
         self.logger.log("Formatting cookies to Netscape format...")
@@ -147,13 +148,14 @@ class StdinNetScapeFormatter(BaseCookieFormatter):
         return cookies
 
     @staticmethod
-    def _convert_expiration(expiration: str):
+    def _convert_expiration(expiration: str) -> int:
         formats = ["%Y-%m-%dT%H:%M:%S.%fZ", "%d.%m.%Y, %H:%M:%S"]
         for format_ in formats:
             try:
                 return int(
                     datetime.datetime.strptime(
-                        expiration, format_,
+                        expiration,
+                        format_,
                     ).timestamp(),
                 )
             except Exception:

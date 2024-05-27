@@ -235,7 +235,10 @@ class TwitchClipsToYoutube:
                 )
             if (
                 self.custom_metadata.custom_description is not None
-                and isinstance(self.custom_metadata.custom_description, str)
+                and isinstance(
+                    self.custom_metadata.custom_description,
+                    str,
+                )
             ):
                 if description != "":
                     description += "\n\n"
@@ -265,7 +268,7 @@ class TwitchClipsToYoutube:
                         f"{self.clips_folder_path}/{clip_info.id}"
                         "_background.mp4",
                     ),
-                    duration=clip_info.durationSeconds,
+                    duration=clip_info.duration_seconds,
                     framerate=clip_info.framerate,
                 )
             )
@@ -278,7 +281,9 @@ class TwitchClipsToYoutube:
             )
             for path in (background_file_path, clip_path):
                 deletion_status, log_info = (
-                    self.twitch_downloader.delete_clip_by_path(path=path)
+                    self.twitch_downloader.delete_clip_by_path(
+                        path=path,
+                    )
                 )
                 if not deletion_status:
                     self.logger.log(f"{log_info}")
@@ -345,7 +350,9 @@ class TwitchClipsToYoutube:
             )
             self.used_titles.append(clip_info.title)
             deletion_status, log_info = (
-                self.twitch_downloader.delete_clip_by_path(clip_path)
+                self.twitch_downloader.delete_clip_by_path(
+                    clip_path,
+                )
             )
             if not deletion_status:
                 self.logger.log(log_info)
@@ -371,7 +378,7 @@ class TwitchClipsToYoutube:
         for clip_info in sorted_clips_info_by_views:
             is_vertical = (
                 self.vertical_video_range.min_duration
-                <= clip_info.durationSeconds
+                <= clip_info.duration_seconds
                 < self.vertical_video_range.max_duration
             )
             try:

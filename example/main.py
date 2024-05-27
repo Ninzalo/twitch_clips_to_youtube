@@ -60,21 +60,27 @@ if __name__ == "__main__":
         Path(CONFIGS_FOLDER_PATH).mkdir(parents=True, exist_ok=True)
     if not TWICH_URLS_PATH.exists():
         with Path.open(
-            TWICH_URLS_PATH, "w", encoding="utf-8",
+            TWICH_URLS_PATH,
+            "w",
+            encoding="utf-8",
         ) as twitch_urls_file:
             json.dump([], twitch_urls_file, ensure_ascii=False, indent=4)
     with Path.open(TWICH_URLS_PATH, encoding="utf-8") as twitch_urls_file:
         TWICH_URLS = json.load(twitch_urls_file)
     if not USED_TITLES_PATH.exists():
         with Path.open(
-            USED_TITLES_PATH, "w", encoding="utf-8",
+            USED_TITLES_PATH,
+            "w",
+            encoding="utf-8",
         ) as used_titles_file:
             json.dump([], used_titles_file, ensure_ascii=False, indent=4)
     with Path.open(USED_TITLES_PATH, encoding="utf-8") as file:
         USED_TITLES = json.load(file)
     if not UNSUPPORTED_WORDS_PATH.exists():
         with Path.open(
-            UNSUPPORTED_WORDS_PATH, "w", encoding="utf-8",
+            UNSUPPORTED_WORDS_PATH,
+            "w",
+            encoding="utf-8",
         ) as u_w_file:
             json.dump([], u_w_file, ensure_ascii=False, indent=4)
     with Path.open(UNSUPPORTED_WORDS_PATH, encoding="utf-8") as file:

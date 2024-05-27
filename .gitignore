@@ -1,26 +1,27 @@
 *__pycache__/
-__pycache__/
+*.ruff_cache
 
 *venv/
+*.lock
 
 .env
 .git
 
 *.egg-info/
 *.egg
-*.mp4
 
 dist
 dist-ssr
 
 # Project folders and files
 *credentials.storage
+*.mp4
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
+*.DS_Store
 
 # Logs
 *logs/

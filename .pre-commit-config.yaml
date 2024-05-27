@@ -1,0 +1,22 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.4.5
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args:
+          [
+            "--fix",
+            "--ignore=N999,S603,TID251,D100,ANN101,ANN102,BLE001,S110,S311",
+            "--ignore=C901,D101,D102,D104,D107,S112,F401,PLR0913,PLR0912",
+            "--select=A,B,D,E,F,I,N,Q,R,S,W,UP,C90,ANN,BLE,FBT,ASYNC,COM,C4,EM",
+            "--select=PIE,TID,ARG,PTH,PL",
+            "--line-length=79",
+            "--no-cache",
+          ]
+        types_or: [python]
+      # Run the formatter.
+      - id: ruff-format
+        args: ["--line-length=79", "--no-cache"]
+        types_or: [python]
