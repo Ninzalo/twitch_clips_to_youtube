@@ -61,12 +61,7 @@ class TwitchClipsDownloader:
         for twitch_url in self.twitch_urls:
             twitch_username = twitch_url.split(r"/")[-1]
             self.logger.log(f"Getting clips from {twitch_username}")
-            command = [
-                "twitch-dl",
-                "clips",
-                twitch_username,
-                "--json",
-            ]
+            command = ["twitch-dl", "clips", twitch_username, "--json"]
             if clips_limit is None or clips_limit == 0:
                 command.append("--all")
             else:
@@ -98,12 +93,7 @@ class TwitchClipsDownloader:
 
     def generate_clip_info_dcls(self, clip_dict: dict) -> ClipInfo:
         default_quality_dict = {
-            "videoQualities": [
-                {
-                    "frameRate": 30,
-                    "quality": "360",
-                },
-            ],
+            "videoQualities": [{"frameRate": 30, "quality": "360"}],
         }
         return ClipInfo(
             id=clip_dict["id"],
@@ -281,7 +271,6 @@ class TwitchClipsDownloader:
         self.logger.log("Cleaning clips folder...")
         for dirs, _, files in os.walk(self.clips_folder_path):
             for file in files:
-                # file_path = os.path.join(dirs, file)
                 file_path = Path(dirs) / file
                 self.delete_clip_by_path(path=Path(file_path))
         self.logger.log("Clips folder cleaned!")

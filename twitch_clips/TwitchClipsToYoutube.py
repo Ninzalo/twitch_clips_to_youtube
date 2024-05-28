@@ -281,9 +281,7 @@ class TwitchClipsToYoutube:
             )
             for path in (background_file_path, clip_path):
                 deletion_status, log_info = (
-                    self.twitch_downloader.delete_clip_by_path(
-                        path=path,
-                    )
+                    self.twitch_downloader.delete_clip_by_path(path=path)
                 )
                 if not deletion_status:
                     self.logger.log(f"{log_info}")
