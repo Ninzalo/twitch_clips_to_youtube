@@ -5,3 +5,7 @@ install:
 .PHONY: check
 check:
 	@poetry run pre-commit run --all-files
+
+.PHONY: update
+update:
+	@poetry update
