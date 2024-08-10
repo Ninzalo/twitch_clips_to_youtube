@@ -23,7 +23,6 @@ moviepy = {git = "https://github.com/Zulko/moviepy.git"}
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.7.1"
-ruff = "^0.4.5"
 
 [build-system]
 requires = ["poetry-core"]
